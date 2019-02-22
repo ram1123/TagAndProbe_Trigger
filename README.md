@@ -1,16 +1,13 @@
 # TagAndProbe_Trigger
 
 ###### https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2#Working_points_for_92X_samples_R
-cmsrel CMSSW_9_4_9  
-cd CMSSW_9_4_9/src  
+cmsrel CMSSW_10_2_11  
+cd CMSSW_10_2_11/src  
 cmsenv  
 git cms-init  
-git cms-merge-topic guitargeek:EgammaID_9_4_X  
-scram b -j 4  
-
-###### Download the TagAndProbe_trigger repository
-git clone https://github.com/skeshri/TagAndProbe_Trigger.git  
-scram b -j 4  
+git cms-merge-topic cms-egamma:EgammaID_1023 ##if you want the V2 IDs, otherwise skip
+git clone git@github.com:arunhep/TagAndProbe_Trigger.git
+scram b -j8  
 
 ## For Test Run 
 cd $CMSSW_BASE/src/TagAndProbe_Trigger/NtupleProducer/test   
