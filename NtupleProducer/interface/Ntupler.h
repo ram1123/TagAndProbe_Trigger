@@ -175,6 +175,7 @@ class Ntupler : public edm::EDAnalyzer {
    
      // All Electron filters and variables
    
+     std::vector<bool> passFilterEle32;
      std::vector<bool> passFilterEle35;
      std::vector<bool> passFilterEle23_12_leg1;
      std::vector<bool> passFilterEle23_12_leg2;
@@ -293,11 +294,15 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<int>      mu_InTimeMuon_;
      std::vector<int>      mu_MultiIsoLoose_;
      std::vector<int>      mu_MultiIsoMedium_;
+     std::vector<bool> passFilterIsoMu24;
      std::vector<bool> passFilterIsoMu27;
+     std::vector<bool> passFilterMu50;
      std::vector<bool> passFilterMu17_Mu8_leg1;
      std::vector<bool> passFilterMu17_Mu8_leg2;
      std::vector<bool> passFilterMu17_Mu8_IsoLeg;
      std::vector<bool> passFilterMu12_Ele23_legMu;
+     std::vector<bool> passFilterMu12_HLTOnly;
+     std::vector<bool> passFilterMu12_L1TOnly;
      std::vector<bool> passFilterMu23_Ele12_legMu;
 
      //Gen particles
