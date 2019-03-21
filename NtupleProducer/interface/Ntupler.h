@@ -299,8 +299,11 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<bool> passFilterMu50;
      std::vector<bool> passFilterMu17_Mu8_leg1;
      std::vector<bool> passFilterMu17_Mu8_leg2;
+     std::vector<bool> passFilterMu17_Mu8_leg2_wL1;
      std::vector<bool> passFilterMu17_Mu8_IsoLeg;
      std::vector<bool> passFilterMu12_Ele23_legMu;
+     std::vector<bool> passFilterMu12_Ele23_legMu_L10p5;
+     std::vector<bool> passFilterMu12_Ele23_legMu_L10p3;
      std::vector<bool> passFilterMu12_HLTOnly;
      std::vector<bool> passFilterMu12_L1TOnly;
      std::vector<bool> passFilterMu23_Ele12_legMu;

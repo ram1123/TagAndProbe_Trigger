@@ -262,8 +262,11 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
   tree_->Branch("passFilterMu50" ,  &passFilterMu50);
   tree_->Branch("passFilterMu17_Mu8_leg1" ,  &passFilterMu17_Mu8_leg1);
   tree_->Branch("passFilterMu17_Mu8_leg2" ,  &passFilterMu17_Mu8_leg2);
+  tree_->Branch("passFilterMu17_Mu8_leg2_wL1" ,  &passFilterMu17_Mu8_leg2_wL1);
   tree_->Branch("passFilterMu17_Mu8_IsoLeg" ,  &passFilterMu17_Mu8_IsoLeg);
   tree_->Branch("passFilterMu12_Ele23_legMu" ,  &passFilterMu12_Ele23_legMu);
+  tree_->Branch("passFilterMu12_Ele23_legMu_L10p5" ,  &passFilterMu12_Ele23_legMu_L10p5);
+  tree_->Branch("passFilterMu12_Ele23_legMu_L10p3" ,  &passFilterMu12_Ele23_legMu_L10p3);
   tree_->Branch("passFilterMu12_HLTOnly" ,  &passFilterMu12_HLTOnly);
   tree_->Branch("passFilterMu12_L1TOnly" ,  &passFilterMu12_L1TOnly);
   tree_->Branch("passFilterMu23_Ele12_legMu" ,  &passFilterMu23_Ele12_legMu);
@@ -829,8 +832,11 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      passFilterMu50       .clear();
      passFilterMu17_Mu8_leg1 .clear();
      passFilterMu17_Mu8_leg2 .clear();
+     passFilterMu17_Mu8_leg2_wL1 .clear();
      passFilterMu17_Mu8_IsoLeg .clear();
      passFilterMu12_Ele23_legMu.clear();
+     passFilterMu12_Ele23_legMu_L10p5.clear();
+     passFilterMu12_Ele23_legMu_L10p3.clear();
      passFilterMu12_HLTOnly.clear();
      passFilterMu12_L1TOnly.clear();
      passFilterMu23_Ele12_legMu.clear();
@@ -843,10 +849,14 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
        float temp1 = 9999.0;
        float temp2 = 9999.0;
-       float delRL1_7=9999;
-       float delRL1_23=9999;
-       float delRL1_7_toBeChecked=9999;
-       float delRL1_23_toBeChecked=9999;
+       float temp3 = 9999.0;
+       float delRL1_7=9999.;
+       float delRL1_23=9999.;
+       float delRL1_Mu8=9999.;
+       float delRL1_7_toBeChecked=9999.;
+       float delRL1_23_toBeChecked=9999.;
+       float delRL1_7_L10p5=9999.;
+       float delRL1_7_L10p3=9999.;
 
        // L1 Matching with check of quality cut
        if (L1muons.isValid()) {
@@ -868,24 +878,35 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                    delRL1_23 = deltaR(L1MuEta,L1MuPhi ,mu->eta(),mu->phi());
                    if (delRL1_23<temp2) temp2 = delRL1_23;
                 }
+
+                if((L1MuPt >= 5 || L1MuPt >= 7) && (L1MuQual>=8 && L1MuQual<=15))
+                {
+                   delRL1_Mu8 = deltaR(L1MuEta,L1MuPhi ,mu->eta(),mu->phi());
+                   if (delRL1_Mu8<temp3) temp3 = delRL1_Mu8;
+                }
+
                 if(temp1<0.1) delRL1_7_toBeChecked=temp1;
-                if(temp2<0.1) delRL1_23_toBeChecked=temp2;
+                if(temp2<0.5) delRL1_23_toBeChecked=temp2;
+                if(temp1<0.3) delRL1_7_L10p3=temp1;
+                if(temp1<0.5) delRL1_7_L10p5=temp1;
+                if(temp3<0.3) delRL1_Mu8=temp3;
            }
          }  
        }
-
-//TString mu_filters[8] = {"hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07","hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07","hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q","hltL3fL1DoubleMu155fFiltered17","hltL3fL1DoubleMu155fPreFiltered8,""hltDiMuon178RelTrkIsoFiltered0p4","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"};
 
        bool filterIsoMu24 = false;
        bool filterIsoMu27 = false;
        bool filterMu50 = false;
        bool filterMu17_Mu8_Leg1 = false;
        bool filterMu17_Mu8_Leg2 = false;
+       bool filterMu17_Mu8_Leg2_wL1 = false;
        bool filterMu17_Mu8_IsoLeg = false;
        bool filterMu12_Ele23_legMu = false;
        bool filterMu23_Ele12_legMu = false;
        bool filterMu12_HLTOnly = false;       
        bool filterMu12_L1TOnly = false;    
+       bool filterMu12_Ele23_legMu_L10p5 = false;
+       bool filterMu12_Ele23_legMu_L10p3 = false;
 
       // Trigger matching
        for (unsigned int iteTrigObj = 0 ; iteTrigObj < filterToMatch_.size() ; iteTrigObj++){
@@ -899,32 +920,31 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
               }
           }
           if(mu_filters[0].Contains(filter) && foundTheLeg)  filterIsoMu24 = true;
-          if(mu_filters[1].Contains(filter) && foundTheLeg)  filterIsoMu27 = true;
-          if(mu_filters[2].Contains(filter) && foundTheLeg)  filterMu50 = true;
-          if(mu_filters[3].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg2 = true; }
-          if(mu_filters[4].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg1 = true; }
-          if(mu_filters[5].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_IsoLeg = true; }
-        //  if(mu_filters[6].Contains(filter) && foundTheLeg)  {filterMu12_Ele23_legMu = true; }
+     //     if(mu_filters[1].Contains(filter) && foundTheLeg)  filterIsoMu27 = true;
+     //     if(mu_filters[2].Contains(filter) && foundTheLeg)  filterMu50 = true;
+          if(mu_filters[3].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg1 = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg2 = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg && delRL1_Mu8 < 0.3)  {filterMu17_Mu8_Leg2_wL1 = true; }
+   //       if(mu_filters[5].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_IsoLeg = true; }
           if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12 && delRL1_7_toBeChecked < 0.1 )  {filterMu12_Ele23_legMu = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12 && delRL1_7_L10p5 < 0.5 )  {filterMu12_Ele23_legMu_L10p5 = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12 && delRL1_7_L10p3 < 0.3 )  {filterMu12_Ele23_legMu_L10p3 = true; }
           if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12)  {filterMu12_HLTOnly = true; }          
-          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=23 && delRL1_23_toBeChecked < 0.1 ) {filterMu23_Ele12_legMu = true; }
-          if(delRL1_7_toBeChecked < 0.1 )  {filterMu12_L1TOnly = true; }  
-         // if(mu_filters[7].Contains(filter)) {cout << " Filter FOUND " << endl;}
-         // if(mu_filters[6].Contains(filter)) {cout << " Filter FOUND " << endl;
-          //            cout << "found the leg  = " << foundTheLeg << endl; }
+     //     if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=23 && delRL1_23_toBeChecked < 0.1 ) {filterMu23_Ele12_legMu = true; }
+          if(delRL1_7_toBeChecked < 0.5 )  {filterMu12_L1TOnly = true; }  
        }
-       //    cout << "delRL1_7_toBeChecked = " << delRL1_7_toBeChecked << endl;
-
-//         cout << "filterMu12_Ele23_legMu = " << "   " << filterMu12_Ele23_legMu << endl;
 
        passFilterIsoMu24       .push_back(filterIsoMu24);
-       passFilterIsoMu27       .push_back(filterIsoMu27);
-       passFilterMu50       .push_back(filterMu50);
-       passFilterMu17_Mu8_leg1 .push_back(filterMu17_Mu8_Leg1);
+//       passFilterIsoMu27       .push_back(filterIsoMu27);
+//       passFilterMu50       .push_back(filterMu50);
+//       passFilterMu17_Mu8_leg1 .push_back(filterMu17_Mu8_Leg1);
        passFilterMu17_Mu8_leg2 .push_back(filterMu17_Mu8_Leg2);
-       passFilterMu17_Mu8_IsoLeg .push_back(filterMu17_Mu8_IsoLeg);
+       passFilterMu17_Mu8_leg2_wL1 .push_back(filterMu17_Mu8_Leg2_wL1);
+ //      passFilterMu17_Mu8_IsoLeg .push_back(filterMu17_Mu8_IsoLeg);
        passFilterMu12_Ele23_legMu .push_back(filterMu12_Ele23_legMu);
-       passFilterMu23_Ele12_legMu .push_back(filterMu23_Ele12_legMu);
+       passFilterMu12_Ele23_legMu_L10p5 .push_back(filterMu12_Ele23_legMu_L10p5);
+       passFilterMu12_Ele23_legMu_L10p3 .push_back(filterMu12_Ele23_legMu_L10p3);
+//       passFilterMu23_Ele12_legMu .push_back(filterMu23_Ele12_legMu);
        passFilterMu12_HLTOnly .push_back(filterMu12_HLTOnly);
        passFilterMu12_L1TOnly .push_back(filterMu12_L1TOnly);
 
@@ -937,10 +957,10 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     mu_eta_   .push_back(mu->eta());
     mu_phi_   .push_back(mu->phi());
     mu_charge_.push_back(mu->charge());
-    mu_type_  .push_back(mu->type());
+//    mu_type_  .push_back(mu->type());
     mu_d0_    .push_back(mu->muonBestTrack()->dxy(pv.position()));
     mu_dz_    .push_back(mu->muonBestTrack()->dz(pv.position()));
-    mu_SIP_   .push_back(fabs(mu->dB(pat::Muon::PV3D))/mu->edB(pat::Muon::PV3D));
+//    mu_SIP_   .push_back(fabs(mu->dB(pat::Muon::PV3D))/mu->edB(pat::Muon::PV3D));
   //  mu_BestTrkPtError_         .push_back(mu->muonBestTrack()->ptError());
   //  mu_BestTrkPt_             .push_back(mu->muonBestTrack()->pt());
   //  mu_BestTrkType_           .push_back(mu->muonBestTrackType());
@@ -962,55 +982,55 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (innmu.isNull()) {
       mu_InnerD0_     .push_back(-99.);
       mu_InnerDz_     .push_back(-99.);
-      mu_TrkLayers_   .push_back(-99);
-      mu_PixelLayers_ .push_back(-99);
-      mu_PixelHits_   .push_back(-99);
-      mu_TrkQuality_  .push_back(-99);
-      mu_InnervalidFraction_ .push_back(-99);
+ //     mu_TrkLayers_   .push_back(-99);
+ //     mu_PixelLayers_ .push_back(-99);
+ //     mu_PixelHits_   .push_back(-99);
+ //     mu_TrkQuality_  .push_back(-99);
+ //     mu_InnervalidFraction_ .push_back(-99);
     } else {
       mu_InnerD0_     .push_back(innmu->dxy(pv.position()));
       mu_InnerDz_     .push_back(innmu->dz(pv.position()));
-      mu_TrkLayers_   .push_back(innmu->hitPattern().trackerLayersWithMeasurement());
-      mu_PixelLayers_ .push_back(innmu->hitPattern().pixelLayersWithMeasurement());
-      mu_PixelHits_   .push_back(innmu->hitPattern().numberOfValidPixelHits());
-      mu_TrkQuality_  .push_back(innmu->quality(reco::TrackBase::highPurity));
-      mu_InnervalidFraction_ .push_back(innmu->validFraction());
+ //     mu_TrkLayers_   .push_back(innmu->hitPattern().trackerLayersWithMeasurement());
+ //    mu_PixelLayers_ .push_back(innmu->hitPattern().pixelLayersWithMeasurement());
+ //     mu_PixelHits_   .push_back(innmu->hitPattern().numberOfValidPixelHits());
+//      mu_TrkQuality_  .push_back(innmu->quality(reco::TrackBase::highPurity));
+//      mu_InnervalidFraction_ .push_back(innmu->validFraction());
     }
 
 //    mu_Stations_   .push_back(mu->numberOfMatchedStations());
 //    mu_Matches_    .push_back(mu->numberOfMatches());
-    mu_IsoTrk_     .push_back(mu->trackIso());
-    mu_PFChIso_    .push_back(mu->pfIsolationR04().sumChargedHadronPt);
-    mu_PFPhoIso_   .push_back(mu->pfIsolationR04().sumPhotonEt);
-    mu_PFNeuIso_   .push_back(mu->pfIsolationR04().sumNeutralHadronEt);
-    mu_PFPUIso_    .push_back(mu->pfIsolationR04().sumPUPt);
-    mu_PFChIso03_  .push_back(mu->pfIsolationR03().sumChargedHadronPt);
-    mu_PFPhoIso03_ .push_back(mu->pfIsolationR03().sumPhotonEt);
-    mu_PFNeuIso03_ .push_back(mu->pfIsolationR03().sumNeutralHadronEt);
-    mu_PFPUIso03_  .push_back(mu->pfIsolationR03().sumPUPt);
+//    mu_IsoTrk_     .push_back(mu->trackIso());
+//    mu_PFChIso_    .push_back(mu->pfIsolationR04().sumChargedHadronPt);
+//    mu_PFPhoIso_   .push_back(mu->pfIsolationR04().sumPhotonEt);
+ //   mu_PFNeuIso_   .push_back(mu->pfIsolationR04().sumNeutralHadronEt);
+ //   mu_PFPUIso_    .push_back(mu->pfIsolationR04().sumPUPt);
+ //   mu_PFChIso03_  .push_back(mu->pfIsolationR03().sumChargedHadronPt);
+ //   mu_PFPhoIso03_ .push_back(mu->pfIsolationR03().sumPhotonEt);
+  //  mu_PFNeuIso03_ .push_back(mu->pfIsolationR03().sumNeutralHadronEt);
+ //   mu_PFPUIso03_  .push_back(mu->pfIsolationR03().sumPUPt);
 
      mu_CutBasedIdLoose_. 	push_back(mu->passed(reco::Muon::CutBasedIdLoose));
      mu_CutBasedIdMedium_.	push_back(mu->passed(reco::Muon::CutBasedIdMedium));
      mu_CutBasedIdTight_.	push_back(mu->passed(reco::Muon::CutBasedIdTight));
-     mu_CutBasedIdMediumPrompt_.push_back(mu->passed(reco::Muon::CutBasedIdMediumPrompt));
-     mu_CutBasedIdGlobalHighPt_.push_back(mu->passed(reco::Muon::CutBasedIdGlobalHighPt));
-     mu_CutBasedIdTrkHighPt_.	push_back(mu->passed(reco::Muon::CutBasedIdTrkHighPt));
-     mu_PFIsoVeryLoose_.	push_back(mu->passed(reco::Muon::PFIsoVeryLoose));
-     mu_PFIsoLoose_.		push_back(mu->passed(reco::Muon::PFIsoLoose));
-     mu_PFIsoMedium_.		push_back(mu->passed(reco::Muon::PFIsoMedium));  
+  //   mu_CutBasedIdMediumPrompt_.push_back(mu->passed(reco::Muon::CutBasedIdMediumPrompt));
+  //   mu_CutBasedIdGlobalHighPt_.push_back(mu->passed(reco::Muon::CutBasedIdGlobalHighPt));
+  //   mu_CutBasedIdTrkHighPt_.	push_back(mu->passed(reco::Muon::CutBasedIdTrkHighPt));
+  //   mu_PFIsoVeryLoose_.	push_back(mu->passed(reco::Muon::PFIsoVeryLoose));
+  //   mu_PFIsoLoose_.		push_back(mu->passed(reco::Muon::PFIsoLoose));
+  //   mu_PFIsoMedium_.		push_back(mu->passed(reco::Muon::PFIsoMedium));  
      mu_PFIsoTight_.		push_back(mu->passed(reco::Muon::PFIsoTight));
      mu_PFIsoVeryTight_.	push_back(mu->passed(reco::Muon::PFIsoVeryTight));
 //     mu_PFIsoVeryVeryTight_.	push_back(mu->passed(reco::MuonPFIsoVeryVeryTight));
-     mu_TrkIsoLoose_.		push_back(mu->passed(reco::Muon::TkIsoLoose));  
-     mu_TrkIsoTight_.		push_back(mu->passed(reco::Muon::TkIsoTight));  
-     mu_SoftCutBasedId_.	push_back(mu->passed(reco::Muon::SoftCutBasedId));
-     mu_MvaLoose_.		push_back(mu->passed(reco::Muon::MvaLoose));  
-     mu_MvaMedium_.		push_back(mu->passed(reco::Muon::MvaMedium)); 
-     mu_MvaTight_.		push_back(mu->passed(reco::Muon::MvaTight));
-     mu_MiniIsoLoose_.		push_back(mu->passed(reco::Muon::MiniIsoLoose)); 
-     mu_MiniIsoMedium_.		push_back(mu->passed(reco::Muon::MiniIsoMedium));
-     mu_MiniIsoTight_.		push_back(mu->passed(reco::Muon::MiniIsoTight)); 
-     mu_MiniIsoVeryTight_.	push_back(mu->passed(reco::Muon::MiniIsoVeryTight));
+//     mu_TrkIsoLoose_.		push_back(mu->passed(reco::Muon::TkIsoLoose));  
+//     mu_TrkIsoTight_.		push_back(mu->passed(reco::Muon::TkIsoTight));  
+//     mu_SoftCutBasedId_.	push_back(mu->passed(reco::Muon::SoftCutBasedId));
+//     mu_MvaLoose_.		push_back(mu->passed(reco::Muon::MvaLoose));  
+//     mu_MvaMedium_.		push_back(mu->passed(reco::Muon::MvaMedium)); 
+//     mu_MvaTight_.		push_back(mu->passed(reco::Muon::MvaTight));
+//     mu_MiniIsoLoose_.		push_back(mu->passed(reco::Muon::MiniIsoLoose)); 
+//     mu_MiniIsoMedium_.		push_back(mu->passed(reco::Muon::MiniIsoMedium));
+//     mu_MiniIsoTight_.		push_back(mu->passed(reco::Muon::MiniIsoTight)); 
+//     mu_MiniIsoVeryTight_.	push_back(mu->passed(reco::Muon::MiniIsoVeryTight));
 //     mu_TriggerIdLoose_.	push_back(mu->passed(reco::Muon::TriggerIdLoose));
 //     mu_InTimeMuon_.		push_back(mu->passed(reco::Muon::InTimeMuon));
 //     mu_MultiIsoLoose_.		push_back(mu->passed(reco::Muon::MultiIsoLoose));
