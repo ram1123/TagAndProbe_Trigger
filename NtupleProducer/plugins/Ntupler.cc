@@ -179,6 +179,7 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
 
   tree_->Branch("triggerPath" ,  &triggerPath);
   tree_->Branch("triggerDecision" ,  &triggerDecision);
+  tree_->Branch("passFilterEle32"           ,  &passFilterEle32);
   tree_->Branch("passFilterEle35"           ,  &passFilterEle35);
   tree_->Branch("passFilterEle23_12_leg1"   ,  &passFilterEle23_12_leg1);
   tree_->Branch("passFilterEle23_12_leg2"   ,  &passFilterEle23_12_leg2);
@@ -256,11 +257,15 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
   tree_->Branch("mu_MultiIsoLoose",&mu_MultiIsoLoose_);
   tree_->Branch("mu_MultiIsoMedium",&mu_MultiIsoMedium_);
  
+  tree_->Branch("passFilterIsoMu24" ,  &passFilterIsoMu24);
   tree_->Branch("passFilterIsoMu27" ,  &passFilterIsoMu27);
+  tree_->Branch("passFilterMu50" ,  &passFilterMu50);
   tree_->Branch("passFilterMu17_Mu8_leg1" ,  &passFilterMu17_Mu8_leg1);
   tree_->Branch("passFilterMu17_Mu8_leg2" ,  &passFilterMu17_Mu8_leg2);
   tree_->Branch("passFilterMu17_Mu8_IsoLeg" ,  &passFilterMu17_Mu8_IsoLeg);
   tree_->Branch("passFilterMu12_Ele23_legMu" ,  &passFilterMu12_Ele23_legMu);
+  tree_->Branch("passFilterMu12_HLTOnly" ,  &passFilterMu12_HLTOnly);
+  tree_->Branch("passFilterMu12_L1TOnly" ,  &passFilterMu12_L1TOnly);
   tree_->Branch("passFilterMu23_Ele12_legMu" ,  &passFilterMu23_Ele12_legMu);
 
   //Gen particles
@@ -302,8 +307,10 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   using namespace edm;
   using namespace reco;
   
-  TString ele_filters[5] = {"hltEle35noerWPTightGsfTrackIsoFilter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"};
-  TString mu_filters[6] = {"hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07","hltL3fL1DoubleMu155fPreFiltered8","hltL3fL1DoubleMu155fFiltered17","hltDiMuon178RelTrkIsoFiltered0p4","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"};
+  TString ele_filters[6] = {"hltEle32WPTightGsfTrackIsoFilter","hltEle35noerWPTightGsfTrackIsoFilter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"};
+//  TString mu_filters[8] = {"hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07","hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07","hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q","hltL3fL1DoubleMu155fFiltered17","hltL3fL1DoubleMu155fPreFiltered8,""hltDiMuon178RelTrkIsoFiltered0p4","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"};
+
+  TString mu_filters[8] = {"hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07","hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07","hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q","hltL3fL1DoubleMu155fFiltered17","hltL3fL1DoubleMu155fPreFiltered8","hltDiMuon178RelTrkIsoFiltered0p4","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"};
 
   if(isMC_)
   {  // Get gen weight info
@@ -548,7 +555,8 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       passMVAIsoWPLoose_.clear();     
       valueMVAnoIso_.clear();     
       valueMVAIso_.clear();     
-    
+   
+      passFilterEle32          .clear(); 
       passFilterEle35          .clear();
       passFilterEle23_12_leg1  .clear();
       passFilterEle23_12_leg2  .clear();
@@ -574,6 +582,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ele_charge_.push_back( el->charge() );
     
       // Trigger matching
+      bool filterEle32 = false;
       bool filterEle35 = false;
       bool filterEle23_12_leg1 = false;
       bool filterEle23_12_leg2 = false;
@@ -590,15 +599,18 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
           }
         }
 //       cout<<"filter : "<<ele_filters[4].Contain(filter)<<"    foundTheLeg : "<<foundTheLeg<<endl;
-//
-//
-        if(ele_filters[0].Contains(filter) && foundTheLeg)  filterEle35 = true;
-        if(ele_filters[1].Contains(filter) && foundTheLeg)  filterEle23_12_leg1 = true;
-        if(ele_filters[2].Contains(filter) && foundTheLeg)  filterEle23_12_leg2 = true;
-        if(ele_filters[3].Contains(filter) && foundTheLeg)  filterMu12_Ele23_legEle = true;
-        if(ele_filters[4].Contains(filter) && foundTheLeg)  filterMu23_Ele12_legEle = true;
+// for reference
+//   TString ele_filters[6] = {"hltEle32WPTightGsfTrackIsoFilter","hltEle35noerWPTightGsfTrackIsoFilter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter","hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"};
+
+        if(ele_filters[0].Contains(filter) && foundTheLeg)  filterEle32 = true; 
+        if(ele_filters[1].Contains(filter) && foundTheLeg)  filterEle35 = true;
+        if(ele_filters[2].Contains(filter) && foundTheLeg)  filterEle23_12_leg1 = true;
+        if(ele_filters[3].Contains(filter) && foundTheLeg)  filterEle23_12_leg2 = true;
+        if(ele_filters[4].Contains(filter) && foundTheLeg)  filterMu12_Ele23_legEle = true;
+        if(ele_filters[5].Contains(filter) && foundTheLeg)  filterMu23_Ele12_legEle = true;
       }
 
+      passFilterEle32          .push_back(filterEle32);
       passFilterEle35          .push_back(filterEle35);
       passFilterEle23_12_leg1  .push_back(filterEle23_12_leg1);
       passFilterEle23_12_leg2  .push_back(filterEle23_12_leg2);
@@ -692,7 +704,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
  }
 
 //cout<<"+==========================================================="<<endl;
-if(isMC_){
+/*if(isMC_){
     genElectron_pt.clear();
     genElectron_eta.clear();
     genElectron_phi.clear();
@@ -710,14 +722,14 @@ if(isMC_){
        bool fromZ_ele = false;
        if(abs(genPart.pdgId())==11){ 
           genElectron = genPart;
-            if(genElectron.pt()>5) {
-	       genElectron_pt.push_back(genElectron.pt());
-	       genElectron_eta.push_back(genElectron.eta());
-	       genElectron_phi.push_back(genElectron.phi());
-	       genElectron_energy.push_back(genElectron.energy());
-               if (hasWZasMother(genElectron))fromZ_ele = true;
-               genElectron_fromZ.push_back(fromZ_ele);
-               } 
+//            if(genElectron.pt()>5) {
+//	       genElectron_pt.push_back(genElectron.pt());
+//	       genElectron_eta.push_back(genElectron.eta());
+//	       genElectron_phi.push_back(genElectron.phi());
+//	       genElectron_energy.push_back(genElectron.energy());
+//               if (hasWZasMother(genElectron))fromZ_ele = true;
+//               genElectron_fromZ.push_back(fromZ_ele);
+//               } 
 	}
        reco::GenParticle  genMuon; 
        bool fromZ_mu = false;
@@ -735,7 +747,7 @@ if(isMC_){
     }
 
   }
-
+*/
  // Muons collection starts
 
   edm::Handle<edm::View<pat::Muon> > muons;
@@ -812,11 +824,15 @@ if(isMC_){
      mu_MultiIsoLoose_.clear();
      mu_MultiIsoMedium_.clear();
 
+     passFilterIsoMu24       .clear();
      passFilterIsoMu27       .clear();
+     passFilterMu50       .clear();
      passFilterMu17_Mu8_leg1 .clear();
      passFilterMu17_Mu8_leg2 .clear();
      passFilterMu17_Mu8_IsoLeg .clear();
      passFilterMu12_Ele23_legMu.clear();
+     passFilterMu12_HLTOnly.clear();
+     passFilterMu12_L1TOnly.clear();
      passFilterMu23_Ele12_legMu.clear();
 
      for(unsigned i=0; i < muons->size();++i ) {
@@ -841,6 +857,8 @@ if(isMC_){
                 float L1MuPhi = L1mu->phi();
                 float L1MuQual = L1mu->hwQual();
                 if((L1MuPt >= 5 || L1MuPt >= 7) && (L1MuQual>=12 && L1MuQual<=15))
+               //   if((L1MuPt >= 5 || L1MuPt >= 7))                
+              // if((L1MuPt >= 7) && (L1MuQual>=12 && L1MuQual<=15))
                 {
                    delRL1_7 = deltaR(L1MuEta,L1MuPhi ,mu->eta(),mu->phi());
                    if (delRL1_7<temp1) temp1 = delRL1_7;
@@ -856,12 +874,18 @@ if(isMC_){
          }  
        }
 
+//TString mu_filters[8] = {"hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07","hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07","hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q","hltL3fL1DoubleMu155fFiltered17","hltL3fL1DoubleMu155fPreFiltered8,""hltDiMuon178RelTrkIsoFiltered0p4","hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12","hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"};
+
+       bool filterIsoMu24 = false;
        bool filterIsoMu27 = false;
+       bool filterMu50 = false;
        bool filterMu17_Mu8_Leg1 = false;
        bool filterMu17_Mu8_Leg2 = false;
        bool filterMu17_Mu8_IsoLeg = false;
        bool filterMu12_Ele23_legMu = false;
        bool filterMu23_Ele12_legMu = false;
+       bool filterMu12_HLTOnly = false;       
+       bool filterMu12_L1TOnly = false;    
 
       // Trigger matching
        for (unsigned int iteTrigObj = 0 ; iteTrigObj < filterToMatch_.size() ; iteTrigObj++){
@@ -874,20 +898,35 @@ if(isMC_){
                foundTheLeg = true;iPass = i;break;
               }
           }
-          if(mu_filters[0].Contains(filter) && foundTheLeg)  filterIsoMu27 = true;
-          if(mu_filters[1].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg2 = true; }
-          if(mu_filters[2].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg1 = true; }
-          if(mu_filters[3].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_IsoLeg = true; }
-          if(mu_filters[1].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12 && delRL1_7_toBeChecked < 0.1 )  {filterMu12_Ele23_legMu = true; }
-          if(mu_filters[1].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=23 && delRL1_23_toBeChecked < 0.1 ) {filterMu23_Ele12_legMu = true; }
-     
+          if(mu_filters[0].Contains(filter) && foundTheLeg)  filterIsoMu24 = true;
+          if(mu_filters[1].Contains(filter) && foundTheLeg)  filterIsoMu27 = true;
+          if(mu_filters[2].Contains(filter) && foundTheLeg)  filterMu50 = true;
+          if(mu_filters[3].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg2 = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_Leg1 = true; }
+          if(mu_filters[5].Contains(filter) && foundTheLeg)  {filterMu17_Mu8_IsoLeg = true; }
+        //  if(mu_filters[6].Contains(filter) && foundTheLeg)  {filterMu12_Ele23_legMu = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12 && delRL1_7_toBeChecked < 0.1 )  {filterMu12_Ele23_legMu = true; }
+          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=12)  {filterMu12_HLTOnly = true; }          
+          if(mu_filters[4].Contains(filter) && foundTheLeg && legObjects[iteTrigObj].at(iPass).pt()>=23 && delRL1_23_toBeChecked < 0.1 ) {filterMu23_Ele12_legMu = true; }
+          if(delRL1_7_toBeChecked < 0.1 )  {filterMu12_L1TOnly = true; }  
+         // if(mu_filters[7].Contains(filter)) {cout << " Filter FOUND " << endl;}
+         // if(mu_filters[6].Contains(filter)) {cout << " Filter FOUND " << endl;
+          //            cout << "found the leg  = " << foundTheLeg << endl; }
        }
+       //    cout << "delRL1_7_toBeChecked = " << delRL1_7_toBeChecked << endl;
+
+//         cout << "filterMu12_Ele23_legMu = " << "   " << filterMu12_Ele23_legMu << endl;
+
+       passFilterIsoMu24       .push_back(filterIsoMu24);
        passFilterIsoMu27       .push_back(filterIsoMu27);
+       passFilterMu50       .push_back(filterMu50);
        passFilterMu17_Mu8_leg1 .push_back(filterMu17_Mu8_Leg1);
        passFilterMu17_Mu8_leg2 .push_back(filterMu17_Mu8_Leg2);
        passFilterMu17_Mu8_IsoLeg .push_back(filterMu17_Mu8_IsoLeg);
        passFilterMu12_Ele23_legMu .push_back(filterMu12_Ele23_legMu);
        passFilterMu23_Ele12_legMu .push_back(filterMu23_Ele12_legMu);
+       passFilterMu12_HLTOnly .push_back(filterMu12_HLTOnly);
+       passFilterMu12_L1TOnly .push_back(filterMu12_L1TOnly);
 
        nMuons_++;
 
@@ -902,12 +941,12 @@ if(isMC_){
     mu_d0_    .push_back(mu->muonBestTrack()->dxy(pv.position()));
     mu_dz_    .push_back(mu->muonBestTrack()->dz(pv.position()));
     mu_SIP_   .push_back(fabs(mu->dB(pat::Muon::PV3D))/mu->edB(pat::Muon::PV3D));
-    mu_BestTrkPtError_         .push_back(mu->muonBestTrack()->ptError());
-    mu_BestTrkPt_             .push_back(mu->muonBestTrack()->pt());
-    mu_BestTrkType_           .push_back(mu->muonBestTrackType());
-    mu_segmentCompatibility_  .push_back(mu->segmentCompatibility());
-    mu_chi2LocalPosition_     .push_back(mu->combinedQuality().chi2LocalPosition);
-    mu_trkKink_               .push_back(mu->combinedQuality().trkKink);
+  //  mu_BestTrkPtError_         .push_back(mu->muonBestTrack()->ptError());
+  //  mu_BestTrkPt_             .push_back(mu->muonBestTrack()->pt());
+  //  mu_BestTrkType_           .push_back(mu->muonBestTrackType());
+  //  mu_segmentCompatibility_  .push_back(mu->segmentCompatibility());
+  //  mu_chi2LocalPosition_     .push_back(mu->combinedQuality().chi2LocalPosition);
+ //   mu_trkKink_               .push_back(mu->combinedQuality().trkKink);
 
     const reco::TrackRef glbmu = mu->globalTrack();
     const reco::TrackRef innmu = mu->innerTrack();
@@ -938,8 +977,8 @@ if(isMC_){
       mu_InnervalidFraction_ .push_back(innmu->validFraction());
     }
 
-    mu_Stations_   .push_back(mu->numberOfMatchedStations());
-    mu_Matches_    .push_back(mu->numberOfMatches());
+//    mu_Stations_   .push_back(mu->numberOfMatchedStations());
+//    mu_Matches_    .push_back(mu->numberOfMatches());
     mu_IsoTrk_     .push_back(mu->trackIso());
     mu_PFChIso_    .push_back(mu->pfIsolationR04().sumChargedHadronPt);
     mu_PFPhoIso_   .push_back(mu->pfIsolationR04().sumPhotonEt);
