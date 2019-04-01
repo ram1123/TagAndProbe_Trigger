@@ -20,7 +20,6 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 #  that is typically found in the DAS under the Configs for given dataset
 #  (although it can be "overridden" by requirements of a given release)
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '') 
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc','') 
 
 #
@@ -42,7 +41,18 @@ inputFilesAOD = cms.untracked.vstring(
     )    
 
 inputFilesMiniAOD = cms.untracked.vstring(
-'root://cms-xrd-global.cern.ch//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/90000/FC89D712-AF37-E811-AD13-008CFAC93F84.root'
+#'root://cms-xrd-global.cern.ch//store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/60000/FFD234BD-747F-9242-9EC3-4D3BC8E564B0.root'
+# 'file:/eos/cms/store/data/Run2018A/EGamma/MINIAOD/17Sep2018-v2/20000/4869CCD2-CD56-4940-ADDF-5E40F1BFAD2E.root'
+'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/7F4EB408-8716-C54E-A94B-43F70636A653.root'
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/CC72CC51-D5CC-C44B-A131-7F2586544284.root'
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/11C70E67-614A-BF46-A0B2-F0C813A51AE6.root',
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/BABEA67E-3141-CA4E-AA26-BE0EC935A828.root',
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/BB61F5F9-FA01-FF48-9CBA-63B0C092522B.root',
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/BB9F4B59-FF60-4D40-B099-6CCAA7CDFBFB.root',
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/BBB6112C-FD09-064A-823B-179D97EFDA44.root',
+#'file:/eos/cms/store/data/Run2018A/SingleMuon/MINIAOD/17Sep2018-v2/00000/BC4287BD-67EC-DB4A-928E-5A65B7B1CEFB.root'
+#'file:/eos/cms/store/data/Run2018A/MuonEG/MINIAOD/17Sep2018-v1/00000/3ED046BB-580B-2E4C-8D74-88324BC8395D.root'
+
 #'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PU2017_94X_mc2017_realistic_v11_ext1-v1/920000/76190FD4-93A5-E811-AA90-A4BF0107E164.root'
 #'root://cms-xrd-global.cern.ch//store/data/Run2017B/MuonEG/MINIAOD/12Sep2017-v1/100000/0423E958-32A3-E711-94AF-1CC1DE1D0AD4.root'
     )
@@ -110,24 +120,34 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  l1EGTag      = cms.InputTag("caloStage2Digis","EGamma","RECO"),
                                  l1MuonTag    = cms.InputTag("gmtStage2Digis","Muon","RECO"),
 
-				 pathsToSave  = cms.vstring( "HLT_Ele35_WPTight_Gsf_v",
-                                                             "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
+				 pathsToSave  = cms.vstring( "HLT_Ele32_WPTight_Gsf_v",
+                                                             "HLT_Ele35_WPTight_Gsf_v",
                                                              "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v",
+                                                             "HLT_IsoMu24_v",
 							     "HLT_IsoMu27_v",
-                                                             "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
-                                                             "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ",
-                                                             "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
+                                                             "HLT_Mu50_v",
+                                                             "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v",
+                                                             "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v",
+                                                             "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v",
+                                                             "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v",
 								),
                                  filterToMatch= cms.vstring(
+                                                          "hltEle32WPTightGsfTrackIsoFilter",
                                   			  "hltEle35noerWPTightGsfTrackIsoFilter",
 				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter",
 				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter",
+                                                          "hltL3crIsoL1sSingleMu22L1f0L2f10QL3f24QL3trkIsoFiltered0p07",
 				 			  "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07",
-							  "hltL3fL1DoubleMu155fPreFiltered8",
+                                                          "hltL3fL1sMu22Or25L1f0L2f10QL3Filtered50Q",
 							  "hltL3fL1DoubleMu155fFiltered17",
+							  "hltL3fL1DoubleMu155fPreFiltered8",
 							  "hltDiMuon178RelTrkIsoFiltered0p4",
+                                                         # "hltDiMuon178RelTrkIsoFiltered0p4DzFiltered0p2",
+                                                        #  "hltDiMuon178Mass3p8Filtered",
+                                                        #  "hltDiMuon178Mass8Filtered",
 							  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12",
 							  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter",
+                                                        #  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLDZFilter",
 							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23",
 							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"
 										),
@@ -171,7 +191,7 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                   muInputTag = cms.InputTag("gmtStage2Digis","Muon","RECO"),
                                  isMC = cms.bool(False),
                                  doMuon = cms.bool(True),
-                                 doEle = cms.bool(True)
+                                 doEle = cms.bool(False)
 
                                  )
 
