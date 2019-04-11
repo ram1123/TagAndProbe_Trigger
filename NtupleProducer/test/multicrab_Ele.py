@@ -1,4 +1,3 @@
-
 name = 'ElectronNtuple_HWW_2017_fixed_v2_92X'
 
 dataset = {
@@ -47,12 +46,12 @@ if __name__ == '__main__':
 
    config.Data.inputDBS = 'global'
    config.Data.splitting = 'LumiBased'
-   config.Data.lumiMask = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+   config.Data.lumiMask = 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
    config.Data.publication = False
    config.Data.totalUnits = -1
-   config.Data.outLFNDirBase = '/store/user/skeshri/' + name
+   config.Data.outLFNDirBase = '/store/user/rasharma/aQGC_Ntuples/TriggerEfficiency/' + name
 
-   config.Site.storageSite = 'T2_IN_TIFR'
+   config.Site.storageSite = 'T3_US_FNALLPC'
  #  config.Site.blacklist = ['T2_BR_SPRACE', 'T2_US_Wisconsin', 'T1_RU_JINR', 'T2_RU_JINR', 'T2_EE_Estonia']
 
    listOfSamples.reverse()

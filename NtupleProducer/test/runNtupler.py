@@ -111,25 +111,11 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  l1MuonTag    = cms.InputTag("gmtStage2Digis","Muon","RECO"),
 
 				 pathsToSave  = cms.vstring( "HLT_Ele35_WPTight_Gsf_v",
-                                                             "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
-                                                             "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v",
 							     "HLT_IsoMu27_v",
-                                                             "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8",
-                                                             "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ",
-                                                             "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
 								),
                                  filterToMatch= cms.vstring(
                                   			  "hltEle35noerWPTightGsfTrackIsoFilter",
-				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter",
-				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter",
 				 			  "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07",
-							  "hltL3fL1DoubleMu155fPreFiltered8",
-							  "hltL3fL1DoubleMu155fFiltered17",
-							  "hltDiMuon178RelTrkIsoFiltered0p4",
-							  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12",
-							  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter",
-							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23",
-							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"
 										),
 				HLTprocess = cms.string("HLT"),
 
@@ -170,7 +156,7 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
 				  eleMVAValuesMapTokenNoIso = cms.InputTag('electronMVAValueMapProducer:ElectronMVAEstimatorRun2Fall17NoIsoV1Values'),	
                                   muInputTag = cms.InputTag("gmtStage2Digis","Muon","RECO"),
                                  isMC = cms.bool(False),
-                                 doMuon = cms.bool(True),
+                                 doMuon = cms.bool(False),
                                  doEle = cms.bool(True)
 
                                  )

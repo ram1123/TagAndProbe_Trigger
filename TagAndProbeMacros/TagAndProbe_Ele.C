@@ -30,7 +30,7 @@ void TagAndProbe::Loop(TString output)
 //    fChain->GetEntry(jentry);       //read all branches
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
-  bool RunSystematic=true;
+  bool RunSystematic=false;
    vector<TString> systematicVar =  {"nominal"};
    
    if (RunSystematic)
@@ -64,17 +64,17 @@ for(int i=0; i<systematicVar.size();i++)
    Long64_t nentries = fChain->GetEntriesFast();
    std::cout<< "total events : "<<nentries<<endl;
    double eta_bins[11] = {-2.5,-2.1,-1.6,-1.4,-0.8,0,0.8,1.4,1.6,2.1,2.5};
-   double pt_bins_Ele35[18] = {0,10,20,30,32,33,34,35,36,37,38,40,45,50,60,100,200};
-   double pt_bins_Ele23_Ele12_leg1[18] = {0,10,20,21,22,23,24,25,26,30,35,40,45,50,60,100,200};
-   double pt_bins_Ele23_Ele12_leg2[18] = {0,10,11,12,13,14,15,20,25,30,35,40,45,50,60,100,200};
+   double pt_bins_Ele35[10] = {35,36,37,38,40,45,50,60,100,200};
+   double pt_bins_Ele23_Ele12_leg1[7] = {35,40,45,50,60,100,200};
+   double pt_bins_Ele23_Ele12_leg2[7] = {35,40,45,50,60,100,200};
 
 // HLT Ele35
-   TH1F *h_Ele35_pt_total = new TH1F("Ele35_pt_total","Ele35_pt",16,pt_bins_Ele35);
+   TH1F *h_Ele35_pt_total = new TH1F("Ele35_pt_total","Ele35_pt",9,pt_bins_Ele35);
    TH1F *h_Ele35_eta_total = new TH1F("Ele35_eta_total","Ele35_eta",10,eta_bins);
-   TH2F *h_Ele35_pt_eta_total = new TH2F("Ele35_pt_eta_total","Ele35_pt_eta",10,eta_bins,16,pt_bins_Ele35);
-   TH1F *h_Ele35_pt_pass = new TH1F("Ele35_pt_pass","Ele35_pt",16,pt_bins_Ele35);
+   TH2F *h_Ele35_pt_eta_total = new TH2F("Ele35_pt_eta_total","Ele35_pt_eta",10,eta_bins,9,pt_bins_Ele35);
+   TH1F *h_Ele35_pt_pass = new TH1F("Ele35_pt_pass","Ele35_pt",9,pt_bins_Ele35);
    TH1F *h_Ele35_eta_pass = new TH1F("Ele35_eta_pass","Ele35_eta",10,eta_bins);
-   TH2F *h_Ele35_pt_eta_pass = new TH2F("Ele35_pt_eta_pass","Ele35_pt_eta",10,eta_bins,16,pt_bins_Ele35);
+   TH2F *h_Ele35_pt_eta_pass = new TH2F("Ele35_pt_eta_pass","Ele35_pt_eta",10,eta_bins,9,pt_bins_Ele35);
 
    h_Ele35_pt_total->Sumw2();
    h_Ele35_eta_total->Sumw2();

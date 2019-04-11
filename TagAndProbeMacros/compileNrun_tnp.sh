@@ -22,6 +22,8 @@ if [[ "$CMACRO" =~ "Mu" ]]; then
     echo " "
     EXEC="tnp_Mu"
 fi
+echo "ram: "$EXEC
+echo "ram: "$CMACRO
 g++ Run_TnP.cxx -o $EXEC  -std=c++0x `root-config --libs --cflags` -include $CMACRO
 
 
@@ -32,35 +34,38 @@ echo "1) Run Interactively : Enter : 0"
 echo "2) Run in lxplus batch : Enter : 1"
 echo " "
 
-read run
+#read run
+run=0
 if [[ $run == 0 ]]; then
 ls -ltrh *.txt
 echo "You are running in interactive mode!!!"
-echo "Enter the name of text file having all the root files"
-read textFile
+echo "Enter the name of text file having all the root files..."
+#read textFile
+#textFile="RootFiles_EOS.txt"
+textFile="RootFiles.txt"
 FirstFile=`head -1 $textFile`
-if [[ "$FirstFile" =~ "root://" ]];   # If your files are present not at cern then access files through xrootd services. That needs to generate a valid proxy.
-then
-        echo " "
-        echo "==== need to generate proxy, since it is going to use xrootd services"
-        echo "==== running voms-proxy-init --voms cms first ===="
-        echo "==== Enter password to generate proxy ===="
-        echo " "
-        voms-proxy-init --voms cms --valid 168:00
-       echo "-------------------------------"
-       echo "---"
-       echo "---   now running ./$EXEC $textFile  "
-       echo "---"
-       echo "-------------------------------"
-       ./$EXEC $textFile
-else
-       echo "-------------------------------"
-       echo "---"
-       echo "---   now running ./$EXEC $textFile  "
-       echo "---"
-       echo "-------------------------------"
-     ./$EXEC $textFile
-  fi
+#if [[ "$FirstFile" =~ "root://" ]];   # If your files are present not at cern then access files through xrootd services. That needs to generate a valid proxy.
+#then
+#        echo " "
+#        echo "==== need to generate proxy, since it is going to use xrootd services"
+#        echo "==== running voms-proxy-init --voms cms first ===="
+#        echo "==== Enter password to generate proxy ===="
+#        echo " "
+#        voms-proxy-init --voms cms --valid 168:00
+#       echo "-------------------------------"
+#       echo "---"
+#       echo "---   now running ./$EXEC $textFile  "
+#       echo "---"
+#       echo "-------------------------------"
+#       ./$EXEC $textFile
+#else
+#       echo "-------------------------------"
+#       echo "---"
+#       echo "---   now running ./$EXEC $textFile  "
+#       echo "---"
+#       echo "-------------------------------"
+#     ./$EXEC $textFile
+#  fi
 fi
 
 if [[ $run == 1 ]]; then 
@@ -110,7 +115,8 @@ then
 else
     echo "All files listed in text file either present in local or at cern itself"
     echo "Do you want to run interactively then press y or Y else job will be submit to batch queues"
-    read Decision
+    #read Decision
+		Decision=Y
     if [[ $Decision == y ]] || [[ $Decision == Y ]]; then
         ./$EXEC $textFile
     else
@@ -124,6 +130,8 @@ else
      echo "#!/bin/bash" >> $batchFileName
      echo "cd $CMSSW_BASE/src/TagAndProbe_Trigger/TagAndProbeMacros" >> $batchFileName
      echo "./$EXEC $textFile" >> $batchFileName
+		 ########################################################
+		 ########################################################
      bsub -q $QUEUE < $batchFileName
     fi
 

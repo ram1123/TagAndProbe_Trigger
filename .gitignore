@@ -1,0 +1,11 @@
+*.root
+Logs/
+*.log
+runstep2condor*.jdl
+runstep2condor*.sh
+x509up_u48298
+tnp_Ele
+*.patch
+docker_stderror
+*.tgz
+crab_*/
