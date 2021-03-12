@@ -390,8 +390,10 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (vertices.isValid())
         if (vertices->size() > 0)
             for (auto v : *vertices)
+            {
                 if (v.ndof() >= 4 && !v.isFake())
                     ++good_vertices_;
+            }
     
     // NOTE FOR RUN 2 THE OLD SELECTION OF GOOD VERTICES BELOW IS DISCOURAGED
     // // Find the first vertex in the collection that passes
@@ -634,11 +636,11 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 if(maxL1MatchedIso >= 23) L1EG23Iso = true;
             }
             
-            passL1EG10 .push_back(L1EG10);
-            passL1EG17 .push_back(L1EG17);
-            passL1EG23 .push_back(L1EG23);
-            passL1EG20Iso .push_back(L1EG20Iso);
-            passL1EG23Iso .push_back(L1EG23Iso);
+            passL1EG10.push_back(L1EG10);
+            passL1EG17.push_back(L1EG17);
+            passL1EG23.push_back(L1EG23);
+            passL1EG20Iso.push_back(L1EG20Iso);
+            passL1EG23Iso.push_back(L1EG23Iso);
             
             // Trigger matching
             bool filterEle32 = false;
@@ -786,8 +788,9 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             reco::GenParticle genPart = (*genParticles)[iteGen];
             reco::GenParticle genElectron;
             bool fromZ_ele = false;
-            if(abs(genPart.pdgId())==11)
+            if (genPart.isPromptFinalState() && abs(genPart.pdgId())==11 && genPart.fromHardProcessFinalState())
             {
+                // std::cout << "[DEBUG]: mother " << genPart.mother()->pdgId() << std::endl;
                 genElectron = genPart;
                 if(genElectron.pt()>5)
                 {
@@ -795,7 +798,12 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     genElectron_eta.push_back(genElectron.eta());
                     genElectron_phi.push_back(genElectron.phi());
                     genElectron_energy.push_back(genElectron.energy());
-                    if (hasWZasMother(genElectron))fromZ_ele = true;
+                    // if (hasWZasMother(genElectron))fromZ_ele = true;
+                    // We should not explicitly check the mother requirement. After requiring above 
+                    // conditons, we are sure that the leptons are from Z-boson. 
+                    // if we check mother then for many events it shows the mother of leptons as lepton itself.
+                    // https://hypernews.cern.ch/HyperNews/CMS/get/generators/2802/1.html
+                    fromZ_ele = true;
                     genElectron_fromZ.push_back(fromZ_ele);
                 }
             }
