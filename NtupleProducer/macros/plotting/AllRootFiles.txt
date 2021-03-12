@@ -1,5 +1,0 @@
-efficiency_nominal.root
-efficiency_TagPt_down.root
-efficiency_TagPt_up.root
-efficiency_Zmass_down.root
-efficiency_Zmass_up.root

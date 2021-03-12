@@ -1,9 +1,0 @@
-Ele35_pt
-Ele35_eta
-Ele35_pt_eta
-Ele23_Ele12_leg1_pt
-Ele23_Ele12_leg1_eta
-Ele23_Ele12_leg1_pt_eta
-Ele23_Ele12_leg2_pt
-Ele23_Ele12_leg2_eta
-Ele23_Ele12_leg2_pt_eta
