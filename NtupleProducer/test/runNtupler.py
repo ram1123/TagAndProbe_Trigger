@@ -20,8 +20,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 #  that is typically found in the DAS under the Configs for given dataset
 #  (although it can be "overridden" by requirements of a given release)
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '') 
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc','') 
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc','')
 
 #
 # Define input data to read
@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
 
 
 #import FWCore.Utilities.FileUtils as FileUtils
-# 
+#
 #inputFilesAOD = cms.untracked.vstring()
 #
 #
@@ -39,7 +39,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
 #
 inputFilesAOD = cms.untracked.vstring(
 'root://cms-xrd-global.cern.ch//store/data/Run2017C/SingleElectron/AOD/12Sep2017-v1/70000/80EF56E5-69A6-E711-AB37-48FD8E2824D7.root',
-    )    
+    )
 
 inputFilesMiniAOD = cms.untracked.vstring(
 #'root://cms-xrd-global.cern.ch//store/data/Run2017B/SingleElectron/MINIAOD/31Mar2018-v1/90000/FC89D712-AF37-E811-AD13-008CFAC93F84.root'
@@ -51,7 +51,7 @@ inputFilesMiniAOD = cms.untracked.vstring(
 #
 # You can list here either AOD or miniAOD files, but not both types mixed
 #
-useAOD = False 
+useAOD = False
 if useAOD == True :
     inputFiles = inputFilesAOD
     outputFile = "electron_ntuple.root"
@@ -62,7 +62,7 @@ else :
     outputFile = "TnP_ntuple.root"
     pileupProductName = "slimmedAddPileupInfo"
     print("MiniAOD input files are used")
-process.source = cms.Source ("PoolSource", fileNames = inputFiles )                             
+process.source = cms.Source ("PoolSource", fileNames = inputFiles )
 
 #
 # Set up electron ID (VID framework)
@@ -70,7 +70,7 @@ process.source = cms.Source ("PoolSource", fileNames = inputFiles )
 
 from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 # turn on VID producer, indicate data format  to be
-# DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
+# DataFormat.AOD or DataFormat.MiniAOD, as appropriate
 if useAOD == True :
     dataFormat = DataFormat.AOD
 else :
@@ -171,7 +171,7 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  # all IDs listed below are available given the content of "my_id_modules" defined above.
                                  # only one is exercised for this example.
                                  #
-                             
+
                                   eleIdMapLoose = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose"),
                                   eleIdMapMedium = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium"),
                                   eleIdMapTight = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight"),

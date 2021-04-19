@@ -45,10 +45,10 @@
 
 // c++ and root related header files
 #include <regex>
-#include "TString.h" 
+#include "TString.h"
 #include "TTree.h"
 #include "Math/VectorUtil.h"
-#include <string> 
+#include <string>
 #include <algorithm>
 
 // HLT related header files
@@ -78,8 +78,8 @@ class Ntupler : public edm::EDAnalyzer {
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
-      enum ElectronMatchType {UNMATCHED = 0, 
-			  TRUE_PROMPT_ELECTRON, 
+      enum ElectronMatchType {UNMATCHED = 0,
+			  TRUE_PROMPT_ELECTRON,
 			  TRUE_ELECTRON_FROM_TAU,
 			  TRUE_NON_PROMPT_ELECTRON}; // The last does not include tau parents
 
@@ -93,7 +93,7 @@ class Ntupler : public edm::EDAnalyzer {
       //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
       //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
-      int matchToTruth(const edm::Ptr<reco::GsfElectron> el,  
+      int matchToTruth(const edm::Ptr<reco::GsfElectron> el,
 		       const edm::Handle<edm::View<reco::GenParticle>>  &prunedGenParticles);
       void findFirstNonElectronMother(const reco::Candidate *particle, int &ancestorPID, int &ancestorStatus);
       bool hasWZasMother(const reco::GenParticle  p)  ;
@@ -119,8 +119,8 @@ class Ntupler : public edm::EDAnalyzer {
       edm::EDGetToken l1EGtoken_;
       edm::EDGetToken l1Muontoken_;
       edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
-      edm::EDGetTokenT<pat::PackedTriggerPrescales>triggerPrescale_; 
-      HLTConfigProvider hltConfig; 
+      edm::EDGetTokenT<pat::PackedTriggerPrescales>triggerPrescale_;
+      HLTConfigProvider hltConfig;
       std::vector<std::string> pathsToSave_;
       std::vector<std::string> filterToMatch_;
       std::string HLTprocess_;
@@ -131,7 +131,7 @@ class Ntupler : public edm::EDAnalyzer {
       edm::EDGetTokenT<edm::View<reco::GenParticle> > genParticlesMiniAODToken_;
       edm::EDGetTokenT<reco::ConversionCollection> conversionsMiniAODToken_;
       edm::EDGetToken muonsMiniAODToken_;
-  
+
      // VID decisions objects
      edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapLooseToken_;
      edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapMediumToken_;
@@ -143,39 +143,39 @@ class Ntupler : public edm::EDAnalyzer {
 
       // L1 Token
       edm::EDGetToken muToken;
-      edm::EDGetToken egToken; 
+      edm::EDGetToken egToken;
 
      // Verbose output for ID
      bool isMC_;
      bool doEle_;
      bool doMuon_;
 
- 
+
      uint32_t run_;
-   
+
      // Vars for PVs
      Int_t pvNTracks_;
-   
+
      // Vars for weight (can be negative)
      double genWeight_;
-   
+
      // Vars for pile-up
      Int_t nPUTrue_;    // true pile-up
      Int_t nPU_;        // generated pile-up
      Int_t good_vertices_;        // generated pile-up
      Int_t nPV_;        // number of reconsrtucted primary vertices
      Float_t rho_;      // the rho variable
-   
-  // Trigger names and decision 
+
+  // Trigger names and decision
      std::vector<bool> triggerDecision;
      std::vector<std::string> triggerPath;
-   
+
      // All Electron filters and variables
      std::vector<bool> passL1EG10;
      std::vector<bool> passL1EG17;
      std::vector<bool> passL1EG23;
      std::vector<bool> passL1EG20Iso;
-     std::vector<bool> passL1EG23Iso;   
+     std::vector<bool> passL1EG23Iso;
      std::vector<bool> passFilterEle32;
      std::vector<bool> passFilterEle115;
      std::vector<bool> passFilterEle50;
@@ -225,91 +225,10 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<double> ele_dr03EcalRecHitSumEt_;
      std::vector<double> ele_dr03HcalDepth1TowerSumEt_;
      std::vector<Int_t>  ele_expectedMissingInnerHits_;
-     std::vector<Int_t>  ele_passConversionVeto_;     
+     std::vector<Int_t>  ele_passConversionVeto_;
      EffectiveAreas   effectiveAreas_;
-   
+
      std::vector<bool> hasMatchedToZ;
- 
-
-    // All Muon variables 
-     Int_t nMuons_;
-     std::vector<double> mu_pt_;
-     std::vector<double> mu_eta_;
-     std::vector<double> mu_phi_;
-     std::vector<double> mu_energy_;
-     std::vector<int> mu_charge_;
-     std::vector<int> mu_type_;
-     std::vector<double> mu_d0_;
-     std::vector<double> mu_dz_;
-     std::vector<double> mu_SIP_;
-     std::vector<double> mu_Chi2NDF_;
-     std::vector<double> mu_InnerD0_;
-     std::vector<double> mu_InnerDz_;
-     std::vector<int>      mu_TrkLayers_;
-     std::vector<int>      mu_PixelLayers_;
-     std::vector<int>      mu_PixelHits_;
-     std::vector<int>      mu_MuonHits_;
-     std::vector<int>      mu_Stations_;
-     std::vector<int>      mu_Matches_;
-     std::vector<int>      mu_TrkQuality_;
-     std::vector<double>    mu_IsoTrk_;
-     std::vector<double>    mu_PFChIso_;
-     std::vector<double>    mu_PFPhoIso_;
-     std::vector<double>    mu_PFNeuIso_;
-     std::vector<double>    mu_PFPUIso_;
-     std::vector<double>    mu_PFChIso03_;
-     std::vector<double>    mu_PFPhoIso03_;
-     std::vector<double>    mu_PFNeuIso03_;
-     std::vector<double>    mu_PFPUIso03_;
-     std::vector<double>    mu_InnervalidFraction_;
-     std::vector<double>    mu_segmentCompatibility_;
-     std::vector<double>    mu_chi2LocalPosition_;
-     std::vector<double>    mu_trkKink_;
-     std::vector<double>    mu_BestTrkPtError_;
-     std::vector<double>    mu_BestTrkPt_;
-     std::vector<int>      mu_BestTrkType_;
-
-     std::vector<int>      mu_CutBasedIdLoose_;
-     std::vector<int>      mu_CutBasedIdMedium_;
-     std::vector<int>      mu_CutBasedIdTight_;
-     std::vector<int>      mu_CutBasedIdMediumPrompt_;
-     std::vector<int>      mu_CutBasedIdGlobalHighPt_;
-     std::vector<int>      mu_CutBasedIdTrkHighPt_;
-     std::vector<int>      mu_PFIsoVeryLoose_;
-     std::vector<int>      mu_PFIsoLoose_;
-     std::vector<int>      mu_PFIsoMedium_;
-     std::vector<int>      mu_PFIsoTight_;
-     std::vector<int>      mu_PFIsoVeryTight_;
-     std::vector<int>      mu_PFIsoVeryVeryTight_;
-     std::vector<int>      mu_TrkIsoLoose_;
-     std::vector<int>      mu_TrkIsoTight_;
-     std::vector<int>      mu_SoftCutBasedId_;
-     std::vector<int>      mu_MvaLoose_;
-     std::vector<int>      mu_MvaMedium_;
-     std::vector<int>      mu_MvaTight_;
-     std::vector<int>      mu_MiniIsoLoose_;
-     std::vector<int>      mu_MiniIsoMedium_;
-     std::vector<int>      mu_MiniIsoTight_;
-     std::vector<int>      mu_MiniIsoVeryTight_;
-     std::vector<int>      mu_TriggerIdLoose_;
-     std::vector<int>      mu_InTimeMuon_;
-     std::vector<int>      mu_MultiIsoLoose_;
-     std::vector<int>      mu_MultiIsoMedium_;
-     std::vector<bool> passFilterIsoMu24;
-     std::vector<bool> passFilterMu17_Mu8_leg1;
-     std::vector<bool> passFilterMu17_Mu8_leg2;
-     std::vector<bool> passFilterMu17_Mu8_IsoLeg;
-     std::vector<bool> passFilterMu12_Ele23_legMu;
-     std::vector<bool> passFilterMu23_Ele12_legMu;
-
-     std::vector<bool> passFilterMu12_Ele23_legMu_L10p5;
-     std::vector<bool> passFilterMu12_Ele23_legMu_L10p3;
-     std::vector<bool> passFilterMu23_Ele12_legMu_L10p5;
-     std::vector<bool> passFilterMu23_Ele12_legMu_L10p3;
-     std::vector<bool> passFilterMu12_L10p5;
-     std::vector<bool> passFilterMu12_L10p3;
-     std::vector<bool> passFilterMu23_L10p5;
-     std::vector<bool> passFilterMu23_L10p3;
 
      //Gen particles
      unsigned int   genParticles_n;
@@ -319,15 +238,9 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<double> genElectron_energy;
      std::vector<bool>   genElectron_fromZ;
 
-     std::vector<double> genMuon_pt;
-     std::vector<double> genMuon_eta;
-     std::vector<double> genMuon_phi;
-     std::vector<double> genMuon_energy;
-     std::vector<bool>   genMuon_fromZ;
-
-    // Tree decleration 
+    // Tree decleration
      TTree *tree_;
-   
+
    };
 
 #endif
