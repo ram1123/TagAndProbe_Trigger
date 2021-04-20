@@ -108,7 +108,6 @@ class Ntupler : public edm::EDAnalyzer {
 
       // AOD case data members
       edm::EDGetToken electronsToken_;
-      edm::EDGetToken muonsToken_;
       edm::EDGetTokenT<reco::VertexCollection> vtxToken_;
       edm::EDGetTokenT<edm::View<reco::GenParticle> > genParticlesToken_;
       edm::EDGetTokenT<reco::ConversionCollection> conversionsToken_;
@@ -130,7 +129,6 @@ class Ntupler : public edm::EDAnalyzer {
       edm::EDGetTokenT<reco::VertexCollection> vtxMiniAODToken_;
       edm::EDGetTokenT<edm::View<reco::GenParticle> > genParticlesMiniAODToken_;
       edm::EDGetTokenT<reco::ConversionCollection> conversionsMiniAODToken_;
-      edm::EDGetToken muonsMiniAODToken_;
 
      // VID decisions objects
      edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapLooseToken_;
@@ -142,14 +140,12 @@ class Ntupler : public edm::EDAnalyzer {
      edm::EDGetTokenT<edm::ValueMap<bool> > eleIdMapMVAIsoWP80Token_;
 
       // L1 Token
-      edm::EDGetToken muToken;
       edm::EDGetToken egToken;
 
      // Verbose output for ID
      bool isMC_;
      bool doEle_;
      bool doMuon_;
-
 
      uint32_t run_;
 
@@ -200,7 +196,6 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<bool> passMVAIsoWP80_;
 
      // all electron variables
-
      Int_t nElectrons_;
      std::vector<double> ele_pt_;
      std::vector<double> ele_eta_;

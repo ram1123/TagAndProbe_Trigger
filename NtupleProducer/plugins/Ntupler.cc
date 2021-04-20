@@ -24,7 +24,6 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     eleIdMapMVAIsoWP80Token_(consumes<edm::ValueMap<bool> >(iConfig.getParameter<edm::InputTag>("eleMVA80Iso"))),
     isMC_(iConfig.getParameter<bool>("isMC")),
     doEle_(iConfig.getParameter<bool>("doEle")),
-    doMuon_(iConfig.getParameter<bool>("doMuon")),
     effectiveAreas_( (iConfig.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath() )
 {
 
@@ -102,11 +101,6 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     (iConfig.getParameter<edm::InputTag>
      ("prescale"));
 
-    muonsMiniAODToken_    = mayConsume<edm::View<pat::Muon> >
-    (iConfig.getParameter<edm::InputTag>
-     ("muonsMiniAOD"));
-
-    muToken    = consumes<BXVector<l1t::Muon>>(iConfig.getParameter<edm::InputTag>("muInputTag"));
     egToken    = consumes<BXVector<l1t::EGamma>>(iConfig.getParameter<edm::InputTag>("egInputTag"));
 
     //
@@ -759,16 +753,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
 
     }
-
-    // Muons collection starts
-
-    edm::Handle<edm::View<pat::Muon> > muons;
-    //  if(isAOD) iEvent.getByToken(muonsToken_,muons);
-    iEvent.getByToken(muonsMiniAODToken_,muons);
-
-    // Handle over L1-muon
-    Handle<BXVector<l1t::Muon>> L1muons;
-    iEvent.getByToken(muToken,L1muons);
 
     // write all information into the tree
     tree_->Fill();

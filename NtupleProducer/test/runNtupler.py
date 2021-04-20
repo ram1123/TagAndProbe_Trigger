@@ -26,7 +26,7 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 #
 # Define input data to read
 #
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 
 
@@ -117,14 +117,12 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  # Objects specific to AOD format
                                  #
                                  electrons    = cms.InputTag("gedGsfElectrons"),
-                                 muons        = cms.InputTag("muons"),
                                  genParticles = cms.InputTag("genParticles"),
                                  vertices     = cms.InputTag("offlinePrimaryVertices"),
                                  conversions  = cms.InputTag('allConversions'),
                                  triggerResultTag     = cms.InputTag("TriggerResults", "", "HLT"),
                                  triggerSummaryTag = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
                                  l1EGTag      = cms.InputTag("caloStage2Digis","EGamma","RECO"),
-                                 l1MuonTag    = cms.InputTag("gmtStage2Digis","Muon","RECO"),
 
 				 pathsToSave  = cms.vstring( "HLT_Ele32_WPTight_Gsf_v",
                                                              "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
@@ -157,7 +155,6 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  genParticlesMiniAOD = cms.InputTag("prunedGenParticles"),
                                  verticesMiniAOD     = cms.InputTag("offlineSlimmedPrimaryVertices"),
                                  conversionsMiniAOD  = cms.InputTag('reducedEgamma:reducedConversions'),
-                                 muonsMiniAOD = cms.InputTag("slimmedMuons"),
                                  trigger     = cms.InputTag("TriggerResults", "", "HLT"),
 			         prescale = cms.InputTag("patTrigger"),
                                  objects = cms.InputTag('slimmedPatTrigger'),
@@ -181,10 +178,8 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
 				  eleMVA80Iso    =  cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-iso-V2-wp80'),
 				  eleMVALoosenoIso =  cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-noIso-V2-wpLoose'),
 				  eleMVALooseIso =  cms.InputTag('egmGsfElectronIDs:mvaEleID-Fall17-iso-V2-wpLoose'),
-                                  muInputTag = cms.InputTag("gmtStage2Digis","Muon","RECO"),
                                   egInputTag = cms.InputTag("caloStage2Digis","EGamma","RECO"),
                                  isMC = cms.bool(True),
-                                 doMuon = cms.bool(False),
                                  doEle = cms.bool(True)
 
                                  )
