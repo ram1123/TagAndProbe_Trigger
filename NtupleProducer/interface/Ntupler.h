@@ -170,6 +170,10 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<bool> triggerDecision;
      std::vector<std::string> triggerPath;
 
+  // Filter names and decision
+     std::vector<bool> filterDecision;
+     std::vector<std::string> filterName;
+
      // All Electron filters and variables
      std::vector<bool> passL1EG10;
      std::vector<bool> passL1EG17;

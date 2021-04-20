@@ -193,7 +193,8 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     tree_->Branch("passFilterMu12_Ele23_legEle"   ,  &passFilterMu12_Ele23_legEle);
     tree_->Branch("passFilterMu23_Ele12_legEle"   ,  &passFilterMu23_Ele12_legEle);
 
-
+    tree_->Branch("filterName" ,  &filterName);
+    tree_->Branch("filterDecision" ,  &filterDecision);
 
     // Trigger objects
 
@@ -231,13 +232,14 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"
     };
 
-    TString mu_filters[6] = { "hltL3crIsoL1sMu22Or25L1f0L2f10QL3f27QL3trkIsoFiltered0p07",
-        "hltL3fL1DoubleMu155fPreFiltered8",
-        "hltL3fL1DoubleMu155fFiltered17",
-        "hltDiMuon178RelTrkIsoFiltered0p4",
-        "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered12",
-        "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23"
-    };
+    TString ELE32FilterList[13] = {
+        "hltEGL1SingleEGOrFilter", "hltEG32L1SingleEGOrEtFilter",
+        "hltEle32WPTightClusterShapeFilter", "hltEle32WPTightHEFilter",
+        "hltEle32WPTightEcalIsoFilter", "hltEle32WPTightHcalIsoFilter",
+        "hltEle32WPTightPixelMatchFilter", "hltEle32WPTightPMS2Filter",
+        "hltEle32WPTightGsfOneOEMinusOneOPFilter", "hltEle32WPTightGsfMissingHitsFilter",
+        "hltEle32WPTightGsfDetaFilter", "hltEle32WPTightGsfDphiFilter",
+        "hltEle32WPTightGsfTrackIsoFilter"};
 
     if(isMC_)
     {  // Get gen weight info
@@ -373,6 +375,8 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     triggerPath.clear();
     triggerDecision.clear();
+    filterName.clear();
+    filterDecision.clear();
 
     const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
     for(unsigned int iPath=0 ; iPath < pathsToSave_.size(); iPath++)
@@ -594,6 +598,19 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 if(ele_filters[6].Contains(filter) && foundTheLeg)  filterEle27 = true;
                 if(ele_filters[7].Contains(filter) && foundTheLeg)  filterMu12_Ele23_legEle = true;
                 if(ele_filters[8].Contains(filter) && foundTheLeg)  filterMu23_Ele12_legEle = true;
+
+                for (int FilterCount = 0; FilterCount < (sizeof(ELE32FilterList)/sizeof(*ELE32FilterList)); ++FilterCount)
+                {
+                    if (ELE32FilterList[FilterCount].Contains(filter) && foundTheLeg)
+                    {
+                        filterName.push_back( ELE32FilterList[FilterCount].Data() );
+                        filterDecision.push_back( true );
+                    } else
+                    {
+                        filterName.push_back( ELE32FilterList[FilterCount].Data() );
+                        filterDecision.push_back( false );
+                    }
+                }
             }
 
             passFilterEle32          .push_back(filterEle32);
