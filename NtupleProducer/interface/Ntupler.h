@@ -18,8 +18,8 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/EgammaCandidates/interface/ConversionFwd.h"
 #include "DataFormats/EgammaCandidates/interface/Conversion.h"
-#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
-#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+#include "CommonTools/Egamma/interface/ConversionTools.h"
+#include "CommonTools/Egamma/interface/EffectiveAreas.h"
 
 //Vertex related header files
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
@@ -167,26 +167,10 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<std::string> triggerPath;
 
   // Filter names and decision
-     std::vector<bool> filterDecision;
-     std::vector<std::string> filterName;
+     std::vector<bool> filterDecision32;
+     std::vector<std::string> filterName32;
 
      // All Electron filters and variables
-     std::vector<bool> passL1EG10;
-     std::vector<bool> passL1EG17;
-     std::vector<bool> passL1EG23;
-     std::vector<bool> passL1EG20Iso;
-     std::vector<bool> passL1EG23Iso;
-     std::vector<bool> passFilterEle32;
-     std::vector<bool> passFilterEle115;
-     std::vector<bool> passFilterEle50;
-     std::vector<bool> passFilterEle27;
-     std::vector<bool> passFilterEle25;
-     std::vector<bool> passFilterEle23_12_leg1;
-     std::vector<bool> passFilterEle23_12_leg2;
-     std::vector<bool> passFilterMu12_Ele23_legEle;
-     std::vector<bool> passFilterMu23_Ele12_legEle;
-     std::vector<bool> L1EG_35 ;
-     std::vector<bool> L1EG_23_12 ;
      std::vector<bool> passEleIdLoose_;
      std::vector<bool> passEleIdMedium_;
      std::vector<bool> passEleIdTight_;
