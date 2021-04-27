@@ -26,7 +26,7 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 #
 # Define input data to read
 #
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 
 
@@ -46,7 +46,8 @@ inputFilesMiniAOD = cms.untracked.vstring(
 #'root://cms-xrd-global.cern.ch//store/mc/Run3Summer19MiniAOD/DYToEE_M-50_NNPDF31_TuneCP5_14TeV-powheg-pythia8/MINIAODSIM/2021Scenario_106X_mcRun3_2021_realistic_v3-v2/270000/087644E5-95DB-E24C-B7A9-81646685DBA9.root'
 #'root://cms-xrd-global.cern.ch//store/mc/Run3Summer19MiniAOD/DYToEE_M-50_NNPDF31_TuneCP5_14TeV-powheg-pythia8/MINIAODSIM/2023Scenario_106X_mcRun3_2023_realistic_v3-v2/260000/007DAFDA-8CA6-504C-A54C-4479B4E75DFF.root'
 #'file:DY2023.root'
-'root://cms-xrd-global.cern.ch//store/mc/Run3Winter20DRPremixMiniAOD/DYJetsToEE_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/110X_mcRun3_2021_realistic_v6-v1/60000/02F993F1-A40E-7048-90EE-E0941D52577D.root'
+#'root://cms-xrd-global.cern.ch//store/mc/Run3Winter20DRPremixMiniAOD/DYJetsToEE_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/110X_mcRun3_2021_realistic_v6-v1/60000/02F993F1-A40E-7048-90EE-E0941D52577D.root'
+'root://cms-xrd-global.cern.ch//store/mc/Run3Winter21DRMiniAOD/ZToEE_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/100000/221bde1b-774c-486f-a666-45aa584a243f.root'
     )
 #
 # You can list here either AOD or miniAOD files, but not both types mixed
@@ -125,27 +126,23 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  l1EGTag      = cms.InputTag("caloStage2Digis","EGamma","RECO"),
 
 				 pathsToSave  = cms.vstring( "HLT_Ele32_WPTight_Gsf_v",
-                                                             "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v",
-                                                             "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v",
-                                                             "HLT_Ele115_CaloIdVT_GsfTrkIdT_v",
-                                                             "HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v",
-                                                             "HLT_DoubleEle25_CaloIdL_MW_v",
-                                                             "HLT_DiEle27_WPTightCaloOnly_L1DoubleEG_v",
-                                                             "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ",
-                                                             "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ",
 								),
                                  filterToMatch= cms.vstring(
-                                  			  "hltEle32WPTightGsfTrackIsoFilter",
-				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter",
-				  			  "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter",
-                                                          "hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter",
-                                                          "hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter",
-                                                          "hltDiEle25CaloIdLMWPMS2UnseededFilter",
-                                                          "hltDiEle27L1DoubleEGWPTightHcalIsoFilter",
-							  "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter",
-							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLMuonlegL3IsoFiltered23",
-							  "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"
+                                                          "hltEGL1SingleEGOrFilter",
+                                                          "hltEG32L1SingleEGOrEtFilter",
+                                                          "hltEle32WPTightClusterShapeFilter",
+                                                          "hltEle32WPTightHEFilter",
+                                                          "hltEle32WPTightEcalIsoFilter",
+                                                          "hltEle32WPTightHcalIsoFilter",     
+                                                          "hltEle32WPTightPixelMatchFilter",
+                                                          "hltEle32WPTightPMS2Filter",
+                                                          "hltEle32WPTightGsfOneOEMinusOneOPFilter",
+                                                          "hltEle32WPTightGsfMissingHitsFilter",
+                                                          "hltEle32WPTightGsfDetaFilter",
+                                                          "hltEle32WPTightGsfDphiFilter",
+                                                          "hltEle32WPTightGsfTrackIsoFilter"
 										),
+                                         
 				HLTprocess = cms.string("HLT"),
 
 				#
@@ -160,9 +157,6 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                  objects = cms.InputTag('slimmedPatTrigger'),
                                  # Effective areas for computing PU correction for isolations
                                  effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"),
-				#effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt"),
-                                 #effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"),
-#                                 effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_92X.txt"),
                                  # ID decisions (common to all formats)
                                  #
                                  # all IDs listed below are available given the content of "my_id_modules" defined above.

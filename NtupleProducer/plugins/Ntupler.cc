@@ -170,25 +170,10 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
 
     tree_->Branch("hasMatchedToZ" , &hasMatchedToZ);
     // Electron Trigger branch
-    tree_->Branch("passL1EG10", &passL1EG10);
-    tree_->Branch("passL1EG17", &passL1EG17);
-    tree_->Branch("passL1EG23", &passL1EG23);
-    tree_->Branch("passL1EG23Iso", &passL1EG23Iso);
-    tree_->Branch("passL1EG20Iso", &passL1EG20Iso);
     tree_->Branch("triggerPath" ,  &triggerPath);
     tree_->Branch("triggerDecision" ,  &triggerDecision);
-    tree_->Branch("passFilterEle32"           ,  &passFilterEle32);
-    tree_->Branch("passFilterEle23_12_leg1"   ,  &passFilterEle23_12_leg1);
-    tree_->Branch("passFilterEle23_12_leg2"   ,  &passFilterEle23_12_leg2);
-    tree_->Branch("passFilterEle115"           ,  &passFilterEle115);
-    tree_->Branch("passFilterEle50"           ,  &passFilterEle50);
-    tree_->Branch("passFilterEle25"           ,  &passFilterEle25);
-    tree_->Branch("passFilterEle27"           ,  &passFilterEle27);
-    tree_->Branch("passFilterMu12_Ele23_legEle"   ,  &passFilterMu12_Ele23_legEle);
-    tree_->Branch("passFilterMu23_Ele12_legEle"   ,  &passFilterMu23_Ele12_legEle);
-
-    tree_->Branch("filterName" ,  &filterName);
-    tree_->Branch("filterDecision" ,  &filterDecision);
+    tree_->Branch("filterName32" ,  &filterName32);
+    tree_->Branch("filterDecision32" ,  &filterDecision32);
 
     // Trigger objects
 
@@ -214,17 +199,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     using namespace edm;
     using namespace reco;
 
-
-    TString ele_filters[9] ={ "hltEle32WPTightGsfTrackIsoFilter",
-        "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg1Filter",
-        "hltEle23Ele12CaloIdLTrackIdLIsoVLTrackIsoLeg2Filter",
-        "hltEle115CaloIdVTGsfTrkIdTGsfDphiFilter",
-        "hltEle50CaloIdVTGsfTrkIdTGsfDphiFilter",
-        "hltDiEle25CaloIdLMWPMS2UnseededFilter",
-        "hltDiEle27L1DoubleEGWPTightHcalIsoFilter",
-        "hltMu12TrkIsoVVLEle23CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter",
-        "hltMu23TrkIsoVVLEle12CaloIdLTrackIdLIsoVLElectronlegTrackIsoFilter"
-    };
 
     TString ELE32FilterList[13] = {
         "hltEGL1SingleEGOrFilter", "hltEG32L1SingleEGOrEtFilter",
@@ -369,8 +343,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     triggerPath.clear();
     triggerDecision.clear();
-    filterName.clear();
-    filterDecision.clear();
 
     const edm::TriggerNames &names = iEvent.triggerNames(*triggerResults);
     for(unsigned int iPath=0 ; iPath < pathsToSave_.size(); iPath++)
@@ -451,6 +423,9 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(doEle_)
     {
         // Loop over electrons
+         
+    filterName32.clear();
+    filterDecision32.clear();
         nElectrons_ = 0;
         ele_pt_.clear();
         ele_etaSC_.clear();
@@ -488,21 +463,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         passMVAIsoWP90_.clear();
         passMVAIsoWP80_.clear();
 
-        passL1EG10 .clear();
-        passL1EG17 .clear();
-        passL1EG23 .clear();
-        passL1EG20Iso .clear();
-        passL1EG23Iso .clear();
-        passFilterEle32          .clear();
-        passFilterEle115          .clear();
-        passFilterEle50          .clear();
-        passFilterEle27          .clear();
-        passFilterEle25          .clear();
-        passFilterEle23_12_leg1  .clear();
-        passFilterEle23_12_leg2  .clear();
-        passFilterMu12_Ele23_legEle.clear();
-        passFilterMu23_Ele12_legEle.clear();
-
         for (size_t i = 0; i < electrons->size(); ++i)
         {
             const auto el = electrons->ptrAt(i);
@@ -520,53 +480,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             ele_energySC_.push_back( el->superCluster()->energy() );
             ele_charge_.push_back( el->charge() );
 
-            // L1 EGamma triggers
-
-            float maxL1MatchedNorm = -1;
-            float maxL1MatchedIso = -1;
-            bool L1EG10(false), L1EG17(false), L1EG23(false), L1EG20Iso(false), L1EG23Iso(false);
-            if (L1EG.isValid())
-            {
-                for(int ibx=L1EG->getFirstBX(); ibx<=L1EG->getLastBX();ibx++)
-                {
-                    for(std::vector<l1t::EGamma>::const_iterator L1eg = L1EG->begin(ibx); L1eg != L1EG->end(ibx); ++L1eg)
-                    {
-                        float L1EGPt = L1eg->pt();
-                        float L1EGEta = L1eg->eta();
-                        float L1EGPhi = L1eg->phi();
-                        float L1EGiso = L1eg->hwIso();
-
-                        float delRL1_EG = deltaR(L1EGEta,L1EGPhi ,el->eta(),el->phi());
-                        if (delRL1_EG < 0.5)
-                        {
-                            if(L1eg->pt() > maxL1MatchedNorm) maxL1MatchedNorm = L1eg->pt();
-                            if(L1eg->hwIso() == 1 && L1eg->pt()>maxL1MatchedIso) maxL1MatchedIso = L1eg->pt();
-                        }
-                    }
-                }
-                if(maxL1MatchedNorm >= 10) L1EG10 = true;
-                if(maxL1MatchedNorm >= 17) L1EG17 = true;
-                if(maxL1MatchedNorm >= 23) L1EG23 = true;
-                if(maxL1MatchedIso >= 20) L1EG20Iso = true;
-                if(maxL1MatchedIso >= 23) L1EG23Iso = true;
-            }
-
-            passL1EG10.push_back(L1EG10);
-            passL1EG17.push_back(L1EG17);
-            passL1EG23.push_back(L1EG23);
-            passL1EG20Iso.push_back(L1EG20Iso);
-            passL1EG23Iso.push_back(L1EG23Iso);
-
             // Trigger matching
-            bool filterEle32 = false;
-            bool filterEle23_12_leg1 = false;
-            bool filterEle23_12_leg2 = false;
-            bool filterEle115 = false;
-            bool filterEle50 = false;
-            bool filterEle25 = false;
-            bool filterEle27 = false;
-            bool filterMu12_Ele23_legEle = false;
-            bool filterMu23_Ele12_legEle = false;
             for (unsigned int iteTrigObj = 0 ; iteTrigObj < filterToMatch_.size() ; iteTrigObj++)
             {
                 bool foundTheLeg = false;
@@ -580,42 +494,20 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                         foundTheLeg = true;break;
                     }
                 }
-                //       cout<<"filter : "<<ele_filters[4].Contain(filter)<<"    foundTheLeg : "<<foundTheLeg<<endl;
-                //
-                //
-                if(ele_filters[0].Contains(filter) && foundTheLeg)  filterEle32 = true;
-                if(ele_filters[1].Contains(filter) && foundTheLeg)  filterEle23_12_leg1 = true;
-                if(ele_filters[2].Contains(filter) && foundTheLeg)  filterEle23_12_leg2 = true;
-                if(ele_filters[3].Contains(filter) && foundTheLeg)  filterEle115 = true;
-                if(ele_filters[4].Contains(filter) && foundTheLeg)  filterEle50 = true;
-                if(ele_filters[5].Contains(filter) && foundTheLeg)  filterEle25 = true;
-                if(ele_filters[6].Contains(filter) && foundTheLeg)  filterEle27 = true;
-                if(ele_filters[7].Contains(filter) && foundTheLeg)  filterMu12_Ele23_legEle = true;
-                if(ele_filters[8].Contains(filter) && foundTheLeg)  filterMu23_Ele12_legEle = true;
 
                 for (int FilterCount = 0; FilterCount < (sizeof(ELE32FilterList)/sizeof(*ELE32FilterList)); ++FilterCount)
                 {
                     if (ELE32FilterList[FilterCount].Contains(filter) && foundTheLeg)
                     {
-                        filterName.push_back( ELE32FilterList[FilterCount].Data() );
-                        filterDecision.push_back( true );
+                        filterName32.push_back( ELE32FilterList[FilterCount].Data() );
+                        filterDecision32.push_back( true );
                     } else
                     {
-                        filterName.push_back( ELE32FilterList[FilterCount].Data() );
-                        filterDecision.push_back( false );
+                        filterName32.push_back( ELE32FilterList[FilterCount].Data() );
+                        filterDecision32.push_back( false );
                     }
                 }
             }
-
-            passFilterEle32          .push_back(filterEle32);
-            passFilterEle23_12_leg1  .push_back(filterEle23_12_leg1);
-            passFilterEle23_12_leg2  .push_back(filterEle23_12_leg2);
-            passFilterEle115          .push_back(filterEle115);
-            passFilterEle50          .push_back(filterEle50);
-            passFilterEle25          .push_back(filterEle25);
-            passFilterEle27          .push_back(filterEle27);
-            passFilterMu12_Ele23_legEle  .push_back(filterMu12_Ele23_legEle);
-            passFilterMu23_Ele12_legEle  .push_back(filterMu23_Ele12_legEle);
 
             // ID and matching
             ele_dEtaIn_.push_back( el->deltaEtaSuperClusterTrackAtVtx() );
@@ -670,9 +562,9 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Conversion rejection
             ele_expectedMissingInnerHits_.push_back(el->gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) );
 
-            bool passConvVeto = !ConversionTools::hasMatchedConversion(*el,*conversions,theBeamSpot->position());
+            //bool passConvVeto = !ConversionTools::hasMatchedConversion(*el,*conversions,theBeamSpot->position());
 
-            ele_passConversionVeto_.push_back( (int) passConvVeto );
+            //ele_passConversionVeto_.push_back( (int) passConvVeto );
             //   ele_SIP_.push_back(fabs(el->dB(pat::Electron::PV3D))/el->edB(pat::Electron::PV3D) );
             //      ele_dr03TkSumPt_.push_back(el->dr03TkSumPt() );
             //     ele_dr03EcalRecHitSumEt_.push_back(el-> dr03EcalRecHitSumEt());
