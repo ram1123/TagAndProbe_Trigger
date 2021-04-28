@@ -5,8 +5,8 @@ Although the macros works for all years.
 # Code setup
 
 ```bash
-cmsrel CMSSW_11_0_3
-cd CMSSW_11_0_3/src
+cmsrel CMSSW_11_2_4
+cd CMSSW_11_2_4/src
 cmsenv
 git clone git@github.com:arunhep/TagAndProbe_Trigger.git
 git checkout EGMHLT_run3_110X

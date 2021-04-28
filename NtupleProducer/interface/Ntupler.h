@@ -167,8 +167,8 @@ class Ntupler : public edm::EDAnalyzer {
      std::vector<std::string> triggerPath;
 
   // Filter names and decision
-     std::vector<bool> filterDecision32;
-     std::vector<std::string> filterName32;
+     std::vector<std::vector<bool>> filterDecision32;
+     std::vector<std::vector<string>> filterName32;
 
      // All Electron filters and variables
      std::vector<bool> passEleIdLoose_;

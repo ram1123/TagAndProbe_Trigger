@@ -1,5 +1,5 @@
 #include "TagAndProbe_Trigger/NtupleProducer/interface/Ntupler.h"
-
+#include "TSystem.h"
 //
 // constants, enums and typedefs
 //
@@ -26,6 +26,12 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     doEle_(iConfig.getParameter<bool>("doEle")),
     effectiveAreas_( (iConfig.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath() )
 {
+
+     if (!(gInterpreter->IsLoaded("vector")))
+        gInterpreter->ProcessLine("#include <vector>");
+     gSystem->Exec("rm -f AutoDict*vector*vector*float*");
+     gInterpreter->GenerateDictionary("vector<vector<string> >", "vector");
+     gInterpreter->GenerateDictionary("vector<vector<bool> >", "vector");
 
     //
     // Prepare tokens for all input collections and objects
@@ -198,7 +204,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     using namespace std;
     using namespace edm;
     using namespace reco;
-
 
     TString ELE32FilterList[13] = {
         "hltEGL1SingleEGOrFilter", "hltEG32L1SingleEGOrEtFilter",
@@ -423,9 +428,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(doEle_)
     {
         // Loop over electrons
-         
-    filterName32.clear();
-    filterDecision32.clear();
+
         nElectrons_ = 0;
         ele_pt_.clear();
         ele_etaSC_.clear();
@@ -463,8 +466,14 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         passMVAIsoWP90_.clear();
         passMVAIsoWP80_.clear();
 
+        filterName32.clear();
+        filterDecision32.clear();
         for (size_t i = 0; i < electrons->size(); ++i)
         {
+            std::vector<string> filterName32_allEle;
+            std::vector<bool> filterDecision32_allEle;
+            filterName32_allEle.clear();
+            filterDecision32_allEle.clear();
             const auto el = electrons->ptrAt(i);
             // for (const pat::Electron &el : *electrons)
             // Kinematics
@@ -495,19 +504,25 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     }
                 }
 
+                bool foundTheFilter = false;
                 for (int FilterCount = 0; FilterCount < (sizeof(ELE32FilterList)/sizeof(*ELE32FilterList)); ++FilterCount)
                 {
                     if (ELE32FilterList[FilterCount].Contains(filter) && foundTheLeg)
                     {
-                        filterName32.push_back( ELE32FilterList[FilterCount].Data() );
-                        filterDecision32.push_back( true );
-                    } else
-                    {
-                        filterName32.push_back( ELE32FilterList[FilterCount].Data() );
-                        filterDecision32.push_back( false );
+                        foundTheFilter = true;
                     }
                 }
+                if (foundTheFilter)
+                {
+                    filterName32_allEle.push_back( filter.Data() );
+                    filterDecision32_allEle.push_back( true );
+                } else {
+                    filterName32_allEle.push_back( filter.Data() );
+                    filterDecision32_allEle.push_back( false );
+                }
             }
+            filterName32.push_back(filterName32_allEle);
+            filterDecision32.push_back(filterDecision32_allEle);
 
             // ID and matching
             ele_dEtaIn_.push_back( el->deltaEtaSuperClusterTrackAtVtx() );

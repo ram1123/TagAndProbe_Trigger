@@ -9,7 +9,7 @@ process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 # NOTE: the pick the right global tag!
 #    for Spring15 50ns MC: global tag is 'auto:run2_mc_50'
@@ -133,7 +133,7 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                                           "hltEle32WPTightClusterShapeFilter",
                                                           "hltEle32WPTightHEFilter",
                                                           "hltEle32WPTightEcalIsoFilter",
-                                                          "hltEle32WPTightHcalIsoFilter",     
+                                                          "hltEle32WPTightHcalIsoFilter",
                                                           "hltEle32WPTightPixelMatchFilter",
                                                           "hltEle32WPTightPMS2Filter",
                                                           "hltEle32WPTightGsfOneOEMinusOneOPFilter",
@@ -142,7 +142,7 @@ process.ntupler = cms.EDAnalyzer('Ntupler',
                                                           "hltEle32WPTightGsfDphiFilter",
                                                           "hltEle32WPTightGsfTrackIsoFilter"
 										),
-                                         
+
 				HLTprocess = cms.string("HLT"),
 
 				#

@@ -1,3 +1,7 @@
 *.root
+*.cxx
+*.d
+*.so
+*.pcm
 .__afs*
 *.log
