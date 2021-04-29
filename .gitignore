@@ -2,6 +2,7 @@
 *.cxx
 *.d
 *.so
+*.pyc
 *.pcm
 .__afs*
 *.log

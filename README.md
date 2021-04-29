@@ -23,6 +23,8 @@ cmsRun runNtupler.py
 # For crab job submission (check the paths etc in the file)
 
 ```bash
+voms-proxy-init --voms cms --valid 168:00
+source /cvmfs/cms.cern.ch/common/crab-setup.sh
 python multicrab_Ele.py
 ```
 

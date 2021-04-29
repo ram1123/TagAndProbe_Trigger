@@ -1,14 +1,17 @@
 name = 'Winter20_110X_v2'
 
 dataset = {
-   'DYEE' : '/DYJetsToEE_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/Run3Winter20DRPremixMiniAOD-110X_mcRun3_2021_realistic_v6-v1/MINIAODSIM',
-   'ZprimeEE' : '/ZprimeToEE_M-6000_TuneCP5_14TeV-pythia8/Run3Winter20DRMiniAOD-FlatPU0to80_110X_mcRun3_2021_realistic_v6-v3/MINIAODSIM',
-   'TTSemilep' : '/TTToSemiLeptonic_TuneCP5_14TeV-powheg-pythia8/Run3Winter20DRPremixMiniAOD-110X_mcRun3_2021_realistic_v6-v2/MINIAODSIM',
-   'QCD' : '/QCD_Pt-15to3000_TuneCP5_Flat_14TeV_pythia8_HCAL/Run3Winter20DRPremixMiniAOD-110X_mcRun3_2021_realistic_v6-v1/MINIAODSIM',
+   'DYEE_FlatPU20to70' : '/ZToEE_TuneCUETP8M1_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
+   'DYEE_NoPURAW' : '/ZToEE_TuneCUETP8M1_14TeV-pythia8/Run3Winter21DRMiniAOD-NoPURAW_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
+   'TT_FlatPU20to70':  '/TT_TuneCP5_14TeV-powheg-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
+   'TT_FlatPU30to80':  '/TT_TuneCP5_14TeV-powheg-pythia8/Run3Winter21DRMiniAOD-FlatPU30to80_112X_mcRun3_2021_realistic_v16-v2/MINIAODSIM',
+   # 'ZprimeEE' : '/ZprimeToEE_M-6000_TuneCP5_14TeV-pythia8/Run3Winter20DRMiniAOD-FlatPU0to80_110X_mcRun3_2021_realistic_v6-v3/MINIAODSIM',
+   # 'TTSemilep' : '/TTToSemiLeptonic_TuneCP5_14TeV-powheg-pythia8/Run3Winter20DRPremixMiniAOD-110X_mcRun3_2021_realistic_v6-v2/MINIAODSIM',
+   'QCD_Pt15to7000' : '/QCD_Pt-15to7000_TuneCUETP8M1_Flat_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
    }
 
 
-#nevents = -1 
+#nevents = -1
 #lumisPerJob = {
 #   'Run2017B':        100,
 #   'Run2017C':        100,
@@ -18,10 +21,13 @@ dataset = {
 #   }
 
 listOfSamples = [
-  # 'DYEE',        
-  # 'ZprimeEE',        
-    'TTSemilep',
-    'QCD',
+    'DYEE_FlatPU20to70',
+    'DYEE_NoPURAW',
+    # 'ZprimeEE',
+    # 'TTSemilep',
+    'TT_FlatPU20to70',
+    'TT_FlatPU30to80',
+    'QCD_Pt15to7000'
    ]
 
 
@@ -49,7 +55,7 @@ if __name__ == '__main__':
 #   config.Data.lumiMask = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
    config.Data.publication = False
    config.Data.totalUnits = -1
-   config.Data.outLFNDirBase = '/store/group/phys_egamma/arun/TriggerEff_Run3/' + name
+   config.Data.outLFNDirBase = '/store/group/phys_egamma/Run3TriggerStudies/rasharma/Ntuples/' + name
 
    config.Site.storageSite = 'T2_CH_CERN'
  #  config.Site.blacklist = ['T2_BR_SPRACE', 'T2_US_Wisconsin', 'T1_RU_JINR', 'T2_RU_JINR', 'T2_EE_Estonia']
