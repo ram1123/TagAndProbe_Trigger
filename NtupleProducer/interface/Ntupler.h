@@ -18,6 +18,14 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/EgammaCandidates/interface/ConversionFwd.h"
 #include "DataFormats/EgammaCandidates/interface/Conversion.h"
+/**
+ * for CMSSW_10_2_15
+ */
+// #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+// #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+/**
+ * for CMSSW_11_2_4
+ */
 #include "CommonTools/Egamma/interface/ConversionTools.h"
 #include "CommonTools/Egamma/interface/EffectiveAreas.h"
 

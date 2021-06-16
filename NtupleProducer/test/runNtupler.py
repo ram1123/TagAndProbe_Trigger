@@ -9,7 +9,7 @@ process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 # NOTE: the pick the right global tag!
 #    for Spring15 50ns MC: global tag is 'auto:run2_mc_50'
@@ -26,7 +26,7 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 #
 # Define input data to read
 #
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 #import FWCore.Utilities.FileUtils as FileUtils
 #
@@ -45,7 +45,9 @@ inputFilesMiniAOD = cms.untracked.vstring(
 #'root://cms-xrd-global.cern.ch//store/mc/Run3Summer19MiniAOD/DYToEE_M-50_NNPDF31_TuneCP5_14TeV-powheg-pythia8/MINIAODSIM/2023Scenario_106X_mcRun3_2023_realistic_v3-v2/260000/007DAFDA-8CA6-504C-A54C-4479B4E75DFF.root'
 #'file:DY2023.root'
 #'root://cms-xrd-global.cern.ch//store/mc/Run3Winter20DRPremixMiniAOD/DYJetsToEE_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/110X_mcRun3_2021_realistic_v6-v1/60000/02F993F1-A40E-7048-90EE-E0941D52577D.root'
-'root://cms-xrd-global.cern.ch//store/mc/Run3Winter21DRMiniAOD/ZToEE_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/100000/221bde1b-774c-486f-a666-45aa584a243f.root'
+# 'root://cms-xrd-global.cern.ch//store/mc/Run3Winter21DRMiniAOD/ZToEE_TuneCUETP8M1_14TeV-pythia8/MINIAODSIM/FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/100000/221bde1b-774c-486f-a666-45aa584a243f.root'
+    'root://cms-xrd-global.cern.ch//store/mc/Run3Winter21DRMiniAOD/DYToLL_M-50_TuneCP5_14TeV-pythia8/MINIAODSIM/FlatPU30to80FEVT_112X_mcRun3_2021_realistic_v16-v2/70000/aed45160-b48b-4b42-8d56-77160031d2a7.root'
+# 'root://cms-xrd-global.cern.ch//store/mc/RunIIAutumn18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/102X_upgrade2018_realistic_v15-v1/80000/E53E0D52-39FF-6F42-A8B2-EEF28EEB4C43.root'
     )
 #
 # You can list here either AOD or miniAOD files, but not both types mixed

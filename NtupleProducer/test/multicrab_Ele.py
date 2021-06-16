@@ -1,4 +1,5 @@
-name = 'Winter20_110X_v2'
+name = 'Run3Winter21_112X_v1'
+# name = 'RunIIAutumn18_102X_v2'
 
 dataset = {
    'DYToLL_M50_Run3': '/DYToLL_M-50_TuneCP5_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_112X_mcRun3_2021_realistic_v16-v2/MINIAODSIM',
@@ -63,7 +64,7 @@ if __name__ == '__main__':
    config.Data.publication = False
    config.Data.totalUnits = -1
    config.Data.outLFNDirBase = '/store/group/phys_egamma/Run3TriggerStudies/rasharma/Ntuples/' + name
-   #config.Data.allowNonValidInputDataset = True
+   config.Data.allowNonValidInputDataset = True
 
    config.Site.storageSite = 'T2_CH_CERN'
  #  config.Site.blacklist = ['T2_BR_SPRACE', 'T2_US_Wisconsin', 'T1_RU_JINR', 'T2_RU_JINR', 'T2_EE_Estonia']

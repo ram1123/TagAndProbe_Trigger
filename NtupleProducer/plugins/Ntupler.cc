@@ -29,7 +29,7 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
 {
     // myfile.open ("Ram_version.txt");
 
-    // myfile<< "run_" << "," << "event_" << "," << "lumis_" << "," << "nElectrons_" << "," << "el->pt()" << "," << "el->superCluster()->eta()" << "," << "el->superCluster()->phi()" << "," << "TriggerDecision" << endl;
+    // myfile<< "run_" << "," << "event_" << "," << "lumis_" << "," << "nElectrons_" << "," << "el->pt()" << "," << "el->superCluster()->eta()" << "," << "el->superCluster()->phi()" << ",ele_passConversionVeto," << "TriggerDecision" << endl;
 
      if (!(gInterpreter->IsLoaded("vector")))
         gInterpreter->ProcessLine("#include <vector>");
@@ -584,16 +584,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             }
             filterName32.push_back(filterName32_allEle);
             filterDecision32.push_back(filterDecision32_allEle);
-            // myfile<< run_ << "," << event_ << "," << lumis_ << "," << nElectrons_ << "," << el->pt() << "," << el->superCluster()->eta() << "," << el->superCluster()->phi() << ",";
-            // for (int i = 0; i < filterName32_allEle.size(); ++i)
-            // {
-            //     if (filterName32_allEle[i] == "hltEle32WPTightGsfTrackIsoFilter")
-            //     {
-            //         // std::cout << filterName32_allEle[i] << "," << filterDecision32_allEle[i] << std::endl;
-            //         myfile << filterName32_allEle[i] << "," << filterDecision32_allEle[i] << std::endl;
-            //         // myfile  << filterDecision32_allEle[i] << std::endl;
-            //     }
-            // }
 
             // ID and matching
             ele_dEtaIn_.push_back( el->deltaEtaSuperClusterTrackAtVtx() );
@@ -673,6 +663,16 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             passMVAnoIsoWP80_.push_back  ( (int)isPassMVAnoIsoWP80_ );
             passMVAIsoWP90_.push_back  ( (int)isPassMVAIsoWP90_ );
             passMVAIsoWP80_.push_back  ( (int)isPassMVAIsoWP80_ );
+
+            // myfile<< run_ << "," << event_ << "," << lumis_ << "," << nElectrons_ << "," << el->pt() << "," << el->superCluster()->eta() << "," << el->superCluster()->phi() << "," << (int) passConvVeto << ",";
+            // for (int i = 0; i < filterName32_allEle.size(); ++i)
+            // {
+            //     if (filterName32_allEle[i] == "hltEle32WPTightGsfTrackIsoFilter")
+            //     {
+            //         myfile  << filterDecision32_allEle[i] << std::endl;
+            //     }
+            // }
+
         }
     }
 
