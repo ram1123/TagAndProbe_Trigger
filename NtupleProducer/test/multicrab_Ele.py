@@ -1,6 +1,7 @@
 name = 'Winter20_110X_v2'
 
 dataset = {
+   'DYToLL_M50_Run3': '/DYToLL_M-50_TuneCP5_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU30to80FEVT_112X_mcRun3_2021_realistic_v16-v2/MINIAODSIM',
    'DYEE_FlatPU20to70' : '/ZToEE_TuneCUETP8M1_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
    'DYEE_NoPURAW' : '/ZToEE_TuneCUETP8M1_14TeV-pythia8/Run3Winter21DRMiniAOD-NoPURAW_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
    'TT_FlatPU20to70':  '/TT_TuneCP5_14TeV-powheg-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
@@ -8,6 +9,7 @@ dataset = {
    # 'ZprimeEE' : '/ZprimeToEE_M-6000_TuneCP5_14TeV-pythia8/Run3Winter20DRMiniAOD-FlatPU0to80_110X_mcRun3_2021_realistic_v6-v3/MINIAODSIM',
    # 'TTSemilep' : '/TTToSemiLeptonic_TuneCP5_14TeV-powheg-pythia8/Run3Winter20DRPremixMiniAOD-110X_mcRun3_2021_realistic_v6-v2/MINIAODSIM',
    'QCD_Pt15to7000' : '/QCD_Pt-15to7000_TuneCUETP8M1_Flat_14TeV-pythia8/Run3Winter21DRMiniAOD-FlatPU20to70_for_DNN_112X_mcRun3_2021_realistic_v16_ext1-v1/MINIAODSIM',
+   'DYJetsToLL_2018': '/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM'
    }
 
 
@@ -21,13 +23,18 @@ dataset = {
 #   }
 
 listOfSamples = [
-    'DYEE_FlatPU20to70',
-    'DYEE_NoPURAW',
-    # 'ZprimeEE',
-    # 'TTSemilep',
-    'TT_FlatPU20to70',
-    'TT_FlatPU30to80',
-    'QCD_Pt15to7000'
+   # Run3Winter
+    # 'DYEE_FlatPU20to70',
+    # 'DYEE_NoPURAW',
+    # # 'ZprimeEE',
+    # # 'TTSemilep',
+    # 'TT_FlatPU20to70',
+    # 'TT_FlatPU30to80',
+    # 'QCD_Pt15to7000',
+    'DYToLL_M50_Run3',
+
+    # RunIIAutumn
+    # 'DYJetsToLL_2018'
    ]
 
 
@@ -56,6 +63,7 @@ if __name__ == '__main__':
    config.Data.publication = False
    config.Data.totalUnits = -1
    config.Data.outLFNDirBase = '/store/group/phys_egamma/Run3TriggerStudies/rasharma/Ntuples/' + name
+   #config.Data.allowNonValidInputDataset = True
 
    config.Site.storageSite = 'T2_CH_CERN'
  #  config.Site.blacklist = ['T2_BR_SPRACE', 'T2_US_Wisconsin', 'T1_RU_JINR', 'T2_RU_JINR', 'T2_EE_Estonia']

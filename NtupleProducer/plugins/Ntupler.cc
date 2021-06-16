@@ -1,5 +1,6 @@
 #include "TagAndProbe_Trigger/NtupleProducer/interface/Ntupler.h"
 #include "TSystem.h"
+
 //
 // constants, enums and typedefs
 //
@@ -26,6 +27,9 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     doEle_(iConfig.getParameter<bool>("doEle")),
     effectiveAreas_( (iConfig.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath() )
 {
+    // myfile.open ("Ram_version.txt");
+
+    // myfile<< "run_" << "," << "event_" << "," << "lumis_" << "," << "nElectrons_" << "," << "el->pt()" << "," << "el->superCluster()->eta()" << "," << "el->superCluster()->phi()" << "," << "TriggerDecision" << endl;
 
      if (!(gInterpreter->IsLoaded("vector")))
         gInterpreter->ProcessLine("#include <vector>");
@@ -117,6 +121,8 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     tree_ = fs->make<TTree> ("EventTree", "Event data");
 
     tree_->Branch("run",  &run_,  "run/I");
+    tree_->Branch("event",  &event_,  "event/I");
+    tree_->Branch("lumis",  &lumis_,  "lumis/I");
 
     tree_->Branch("pvNTracks", &pvNTracks_ , "pvNTracks/I");
     tree_->Branch("good_vertices",&good_vertices_, "good_vertices/I");
@@ -174,10 +180,17 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
     tree_->Branch("passMVAIsoWP90"  ,  &passMVAIsoWP90_ );
     tree_->Branch("passMVAIsoWP80"  ,  &passMVAIsoWP80_ );
 
-    tree_->Branch("hasMatchedToZ" , &hasMatchedToZ);
+    // tree_->Branch("hasMatchedToZ" , &hasMatchedToZ);
     // Electron Trigger branch
+    tree_->Branch("passL1EG10", &passL1EG10);
+    tree_->Branch("passL1EG17", &passL1EG17);
+    tree_->Branch("passL1EG23", &passL1EG23);
+    tree_->Branch("passL1EG23Iso", &passL1EG23Iso);
+    tree_->Branch("passL1EG20Iso", &passL1EG20Iso);
+
     tree_->Branch("triggerPath" ,  &triggerPath);
     tree_->Branch("triggerDecision" ,  &triggerDecision);
+
     tree_->Branch("filterName32" ,  &filterName32);
     tree_->Branch("filterDecision32" ,  &filterDecision32);
 
@@ -188,6 +201,7 @@ Ntupler::Ntupler(const edm::ParameterSet& iConfig):
 
 Ntupler::~Ntupler()
 {
+ // myfile.close();
     // do anything here that needs to be done at desctruction time
     // (e.g. close files, deallocate resources etc.)
 }
@@ -234,6 +248,8 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
 
     run_ = iEvent.id().run();
+    event_ = iEvent.id().event();
+    lumis_ = iEvent.id().luminosityBlock();
 
     // Get rho value
     edm::Handle< double > rhoH;
@@ -355,6 +371,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         TString path = pathsToSave_.at(iPath);
         bool trigDec(false);
         size_t j;
+        // std::cout << "Trigger size: " << triggerResults->size() << "\t" << path << std::endl;
         for (j=0; j < triggerResults->size(); j++)
         {
             if (TString(names.triggerName(j)).Contains(path))
@@ -368,7 +385,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         j=0;
         triggerPath.push_back( path.Data() );
         triggerDecision.push_back( trigDec );
-        //	cout<<"path : "<<path<<"    , Decision : "<<triggerDecision[iPath]<<endl;
+        // cout<<"path : "<<path<<"    , Decision : "<<triggerDecision[iPath]<<endl;
     }
 
     edm::Handle<trigger::TriggerEvent> triggerSummary;
@@ -389,7 +406,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             if (filterIndex < (*triggerSummary).sizeFilters())
             { //check if the trigger object is present
                 //save the trigger objects corresponding to muon leg
-                //           cout<<"filterIndex : "<<filterIndex<<"   , filterName :  "<<(*triggerSummary).filterLabel(filterIndex)<<"  , filterTag : "<<filterTag<<endl;
+                cout<<"filterIndex : "<<filterIndex<<"   , filterName :  "<<(*triggerSummary).filterLabel(filterIndex)<<"  , filterTag : "<<filterTag<<endl;
                 const trigger::Keys &keys = (*triggerSummary).filterKeys(filterIndex);
                 for (size_t j = 0; j < keys.size(); j++)
                 {
@@ -428,7 +445,6 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(doEle_)
     {
         // Loop over electrons
-
         nElectrons_ = 0;
         ele_pt_.clear();
         ele_etaSC_.clear();
@@ -466,6 +482,12 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         passMVAIsoWP90_.clear();
         passMVAIsoWP80_.clear();
 
+        passL1EG10 .clear();
+        passL1EG17 .clear();
+        passL1EG23 .clear();
+        passL1EG20Iso .clear();
+        passL1EG23Iso .clear();
+
         filterName32.clear();
         filterDecision32.clear();
         for (size_t i = 0; i < electrons->size(); ++i)
@@ -474,6 +496,7 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             std::vector<bool> filterDecision32_allEle;
             filterName32_allEle.clear();
             filterDecision32_allEle.clear();
+
             const auto el = electrons->ptrAt(i);
             // for (const pat::Electron &el : *electrons)
             // Kinematics
@@ -489,6 +512,43 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             ele_energySC_.push_back( el->superCluster()->energy() );
             ele_charge_.push_back( el->charge() );
 
+            // L1 EGamma triggers
+
+            float maxL1MatchedNorm = -1;
+            float maxL1MatchedIso = -1;
+            bool L1EG10(false), L1EG17(false), L1EG23(false), L1EG20Iso(false), L1EG23Iso(false);
+            if (L1EG.isValid())
+            {
+                for(int ibx=L1EG->getFirstBX(); ibx<=L1EG->getLastBX();ibx++)
+                {
+                    for(std::vector<l1t::EGamma>::const_iterator L1eg = L1EG->begin(ibx); L1eg != L1EG->end(ibx); ++L1eg)
+                    {
+                        float L1EGPt = L1eg->pt();
+                        float L1EGEta = L1eg->eta();
+                        float L1EGPhi = L1eg->phi();
+                        float L1EGiso = L1eg->hwIso();
+
+                        float delRL1_EG = deltaR(L1EGEta,L1EGPhi ,el->eta(),el->phi());
+                        if (delRL1_EG < 0.5)
+                        {
+                            if(L1eg->pt() > maxL1MatchedNorm) maxL1MatchedNorm = L1eg->pt();
+                            if(L1eg->hwIso() == 1 && L1eg->pt()>maxL1MatchedIso) maxL1MatchedIso = L1eg->pt();
+                        }
+                    }
+                }
+                if(maxL1MatchedNorm >= 10) L1EG10 = true;
+                if(maxL1MatchedNorm >= 17) L1EG17 = true;
+                if(maxL1MatchedNorm >= 23) L1EG23 = true;
+                if(maxL1MatchedIso >= 20) L1EG20Iso = true;
+                if(maxL1MatchedIso >= 23) L1EG23Iso = true;
+            }
+
+            passL1EG10.push_back(L1EG10);
+            passL1EG17.push_back(L1EG17);
+            passL1EG23.push_back(L1EG23);
+            passL1EG20Iso.push_back(L1EG20Iso);
+            passL1EG23Iso.push_back(L1EG23Iso);
+
             // Trigger matching
             for (unsigned int iteTrigObj = 0 ; iteTrigObj < filterToMatch_.size() ; iteTrigObj++)
             {
@@ -500,7 +560,8 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
                     if (delR<0.1)
                     {
-                        foundTheLeg = true;break;
+                        foundTheLeg = true;
+                        break;
                     }
                 }
 
@@ -523,6 +584,16 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             }
             filterName32.push_back(filterName32_allEle);
             filterDecision32.push_back(filterDecision32_allEle);
+            // myfile<< run_ << "," << event_ << "," << lumis_ << "," << nElectrons_ << "," << el->pt() << "," << el->superCluster()->eta() << "," << el->superCluster()->phi() << ",";
+            // for (int i = 0; i < filterName32_allEle.size(); ++i)
+            // {
+            //     if (filterName32_allEle[i] == "hltEle32WPTightGsfTrackIsoFilter")
+            //     {
+            //         // std::cout << filterName32_allEle[i] << "," << filterDecision32_allEle[i] << std::endl;
+            //         myfile << filterName32_allEle[i] << "," << filterDecision32_allEle[i] << std::endl;
+            //         // myfile  << filterDecision32_allEle[i] << std::endl;
+            //     }
+            // }
 
             // ID and matching
             ele_dEtaIn_.push_back( el->deltaEtaSuperClusterTrackAtVtx() );
@@ -577,9 +648,9 @@ Ntupler::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             // Conversion rejection
             ele_expectedMissingInnerHits_.push_back(el->gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS) );
 
-            //bool passConvVeto = !ConversionTools::hasMatchedConversion(*el,*conversions,theBeamSpot->position());
+            bool passConvVeto = !ConversionTools::hasMatchedConversion(*el,*conversions,theBeamSpot->position());
 
-            //ele_passConversionVeto_.push_back( (int) passConvVeto );
+            ele_passConversionVeto_.push_back( (int) passConvVeto );
             //   ele_SIP_.push_back(fabs(el->dB(pat::Electron::PV3D))/el->edB(pat::Electron::PV3D) );
             //      ele_dr03TkSumPt_.push_back(el->dr03TkSumPt() );
             //     ele_dr03EcalRecHitSumEt_.push_back(el-> dr03EcalRecHitSumEt());

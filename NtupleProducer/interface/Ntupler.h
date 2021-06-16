@@ -67,6 +67,8 @@
 #include "DataFormats/L1Trigger/interface/EGamma.h"
 #include "DataFormats/L1Trigger/interface/Muon.h"
 
+#include <iostream>
+#include <fstream>
 //
 // class declaration
 //
@@ -98,6 +100,8 @@ class Ntupler : public edm::EDAnalyzer {
       void findFirstNonElectronMother(const reco::Candidate *particle, int &ancestorPID, int &ancestorStatus);
       bool hasWZasMother(const reco::GenParticle  p)  ;
       static bool cmd(const reco::GenParticle & s1,const reco::GenParticle & s2);
+      edm::ParameterSetID triggerNamesID_;
+      ofstream myfile;
 
   	// ----------member data ---------------------------
       // Data members that are the same for AOD and miniAOD
@@ -148,6 +152,8 @@ class Ntupler : public edm::EDAnalyzer {
      bool doMuon_;
 
      uint32_t run_;
+     uint32_t event_;
+     uint32_t lumis_;
 
      // Vars for PVs
      Int_t pvNTracks_;
@@ -162,15 +168,20 @@ class Ntupler : public edm::EDAnalyzer {
      Int_t nPV_;        // number of reconsrtucted primary vertices
      Float_t rho_;      // the rho variable
 
-  // Trigger names and decision
+     // Trigger names and decision
      std::vector<bool> triggerDecision;
      std::vector<std::string> triggerPath;
 
-  // Filter names and decision
+     // All Electron filters and variables
+     std::vector<bool> passL1EG10;
+     std::vector<bool> passL1EG17;
+     std::vector<bool> passL1EG23;
+     std::vector<bool> passL1EG20Iso;
+     std::vector<bool> passL1EG23Iso;
+     // Filter names and decision
      std::vector<std::vector<bool>> filterDecision32;
      std::vector<std::vector<string>> filterName32;
 
-     // All Electron filters and variables
      std::vector<bool> passEleIdLoose_;
      std::vector<bool> passEleIdMedium_;
      std::vector<bool> passEleIdTight_;
